@@ -5,7 +5,7 @@
   <DisplayName>MyVaultBrowser</DisplayName>
   <Description>MyVaultBrowser</Description>
   <Assembly>MyVaultBrowser.dll</Assembly>
-  <LoadBehavior>1</LoadBehavior>
+  <LoadBehavior>0</LoadBehavior>
   <UserUnloadable>1</UserUnloadable>
   <Hidden>0</Hidden>
   <SupportedSoftwareVersionGreaterThan>17..</SupportedSoftwareVersionGreaterThan>

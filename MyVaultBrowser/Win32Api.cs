@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Diagnostics;
-using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
-using MyVaultBrowser;
 
-namespace InvAddIn
+namespace MyVaultBrowser
 {
     internal class Win32Api
     {
@@ -13,8 +11,7 @@ namespace InvAddIn
 
         private const uint EVENT_OBJECT_CREATE = 0x8000;
 
-        private const uint EVENT_OBJECT_DESTROY = 0x8001;
-
+        //private const uint EVENT_OBJECT_DESTROY = 0x8001;
         private const uint WINEVENT_OUTOFCONTEXT = 0;
 
         // Need to ensure delegate is not collected while we're using it,
@@ -25,8 +22,9 @@ namespace InvAddIn
         private static uint hview = 0;
 
         /// <summary>
-        /// Call win32 procedure to listen to the creation of the vault browser.
+        /// Call win32 procedure to listen to the creation of the vault browser window.
         /// </summary>
+        /// <param name="view">The view HWND.</param>
         /// <param name="idProcess">The process id of Inventor.</param>
         /// <param name="idThread">The main window thread of Inventor, optional.</param>
         public static void SetEventHook(uint view, uint idProcess, uint idThread = 0)
@@ -93,9 +91,8 @@ namespace InvAddIn
 
                 if (ret > 0 && stringBuilder.ToString() == "Vault")
                 {
-                    StandardAddInServer.AddVaultBrowserHwnd((int) hview, pHwnd);
+                    StandardAddInServer.AddHwnd((int) hview, pHwnd);
                     UnHookEvent();
-                    
 #if DEBUG
                     Debug.WriteLine($"Vault Browser: {(int)pHwnd:X}");
 #endif

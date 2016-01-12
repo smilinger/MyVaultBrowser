@@ -1,11 +1,8 @@
+using Inventor;
 using System;
 using System.Collections.Generic;
-using System.Runtime.InteropServices;
 using System.Diagnostics;
-using System.Linq;
-using System.Threading;
-using InvAddIn;
-using Inventor;
+using System.Runtime.InteropServices;
 
 namespace MyVaultBrowser
 {
@@ -17,44 +14,45 @@ namespace MyVaultBrowser
     [Guid("ffbbb57a-07f3-4d5c-97b0-e8e302247c7a")]
     public class StandardAddInServer : ApplicationAddInServer
     {
-        private static MultiUserModeEnum activeProjectType;
-        private static ApplicationEvents applicationEvents;
-        private static DockableWindowsEvents dockableWindowsEvents;
-        private static Application inventorApplication;
+        private MultiUserModeEnum activeProjectType;
+        private ApplicationEvents applicationEvents;
+        private DockableWindowsEvents dockableWindowsEvents;
+        private Application inventorApplication;
         private static DockableWindow myVaultBrowser;
-
         private static View activeView;
-        
+
         // Dictionary to store the HWND of the view and the corresponding HWND of the vault browser.
-        private static Dictionary<int, IntPtr> viewHwndDic;
+        private static Dictionary<int, IntPtr> hwndDic;
 
-        public static void AddVaultBrowserHwnd(int view, IntPtr hwnd)
+        public static void AddHwnd(int viewHwnd, IntPtr hwnd)
         {
-            viewHwndDic[view] = hwnd;
-
-            //if (activeView.HWND == view)
-            //    vaultBrowserPane = inventorApplication.ActiveDocument.BrowserPanes["Vault"];
+            hwndDic[viewHwnd] = hwnd;
             if (myVaultBrowser.Visible)
-            {
-                UpdateVaultBrowser();
-            }
+                UpdateMyVaultBrowser();
         }
 
-        private static void UpdateVaultBrowser()
+        private static void UpdateMyVaultBrowser()
         {
             myVaultBrowser.Clear();
-            if (viewHwndDic.ContainsKey(activeView.HWND))
+            if (hwndDic.ContainsKey(activeView.HWND))
             {
                 activeView.Document.BrowserPanes["Vault"].Visible = false;
-                myVaultBrowser.AddChild(viewHwndDic[activeView.HWND]);
+                myVaultBrowser.AddChild(hwndDic[activeView.HWND]);
             }
         }
 
-        private static void RestoreVaultBrowser()
+        private void RestoreVaultBrowser()
         {
             myVaultBrowser.Clear();
-            if (activeView.Document.BrowserPanes.Count >= 2)
+            try
+            {
                 activeView.Document.BrowserPanes["Vault"].Visible = true;
+            }
+            catch
+            {
+                //If the document is closing, the vault browser may not be there anymore,
+                //or if vault addin is not loaded?
+            }
         }
 
         private void SubscribeEvents()
@@ -66,20 +64,6 @@ namespace MyVaultBrowser
             applicationEvents.OnActivateView += ApplicationEvents_OnActivateView;
             dockableWindowsEvents.OnShow += DockableWindowsEvents_OnShow;
             dockableWindowsEvents.OnHide += DockableWindowsEvents_OnHide;
-            try
-            {
-                ApplicationAddIn vaultAddin =
-                    inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
-                if (vaultAddin.Activated)
-                {
-                    vaultAddin.Deactivate();
-                    vaultAddin.Activate();
-                }
-            }
-            catch
-            {
-                //
-            }
         }
 
         private void UnSubscribeEvents()
@@ -92,6 +76,26 @@ namespace MyVaultBrowser
             dockableWindowsEvents.OnShow -= DockableWindowsEvents_OnShow;
             dockableWindowsEvents.OnHide -= DockableWindowsEvents_OnHide;
         }
+
+        private void ReloadVaultAddin()
+        {
+            try
+            {
+                ApplicationAddIn vaultAddin =
+                    inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
+                if (vaultAddin.Activated)
+                {
+                    vaultAddin.Deactivate();
+                }
+                //Make sure vault addin is loaded and loaded after me.
+                vaultAddin.Activate();
+            }
+            catch
+            {
+                //
+            }
+        }
+
         #region ApplicationAddInServer Members
 
         public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
@@ -108,14 +112,17 @@ namespace MyVaultBrowser
 
             activeProjectType = inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
             if (activeProjectType == MultiUserModeEnum.kVaultMode)
+            {
                 SubscribeEvents();
+                if(inventorApplication.Ready)
+                    ReloadVaultAddin();
+            }
 
-            viewHwndDic = new Dictionary<int, IntPtr>();
+            activeView = inventorApplication.ActiveView;
+
+            hwndDic = new Dictionary<int, IntPtr>();
 
             applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
-
-            // TODO: Add ApplicationAddInServer.Activate implementation.
-            // e.g. event initialization, command creation etc.
 
             if (myVaultBrowser == null)
             {
@@ -132,8 +139,6 @@ namespace MyVaultBrowser
                 myVaultBrowser =
                     inventorApplication.UserInterfaceManager.DockableWindows["myvaultbrowser"];
             }
-
-            
         }
 
         public void Deactivate()
@@ -147,6 +152,9 @@ namespace MyVaultBrowser
             applicationEvents = null;
 
             myVaultBrowser = null;
+            activeView = null;
+
+            hwndDic = null;
 
             Marshal.ReleaseComObject(inventorApplication);
             inventorApplication = null;
@@ -157,20 +165,20 @@ namespace MyVaultBrowser
 
         public void ExecuteCommand(int commandId)
         {
-            // Note:this method is now obsolete, you should use the 
+            // Note:this method is now obsolete, you should use the
             // ControlDefinition functionality for implementing commands.
         }
 
         public object Automation
         {
-            // This property is provided to allow the AddIn to expose an API 
+            // This property is provided to allow the AddIn to expose an API
             // of its own to other programs. Typically, this  would be done by
-            // implementing the AddIn's API interface in a class and returning 
+            // implementing the AddIn's API interface in a class and returning
             // that class object through this property.
             get { return null; }
         }
 
-        #endregion
+        #endregion ApplicationAddInServer Members
 
         #region Event Handlers
 
@@ -182,6 +190,7 @@ namespace MyVaultBrowser
                 if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode)
                 {
                     SubscribeEvents();
+                    ReloadVaultAddin();
                 }
                 else
                 {
@@ -207,8 +216,8 @@ namespace MyVaultBrowser
             //Debug.WriteLine("DockableWindowsEvents_OnShow");
 #endif
             if (BeforeOrAfter == EventTimingEnum.kBefore && DockableWindow.InternalName == "myvaultbrowser" &&
-                viewHwndDic.ContainsKey(activeView.HWND))
-                UpdateVaultBrowser();
+                hwndDic.ContainsKey(activeView.HWND))
+                UpdateMyVaultBrowser();
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
@@ -220,7 +229,7 @@ namespace MyVaultBrowser
             //Win32Api.UnHookEvent();
 #endif
             if (BeforeOrAfter == EventTimingEnum.kBefore)
-                viewHwndDic.Remove(ViewObject.HWND);
+                hwndDic.Remove(ViewObject.HWND);
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
@@ -231,8 +240,8 @@ namespace MyVaultBrowser
             {
                 var doc = ViewObject.Document;
                 if (doc.Views.Count > 1)
-                    if (viewHwndDic.ContainsKey(doc.Views[1].HWND))
-                        viewHwndDic[ViewObject.HWND] = viewHwndDic[doc.Views[1].HWND];
+                    if (hwndDic.ContainsKey(doc.Views[1].HWND))
+                        hwndDic[ViewObject.HWND] = hwndDic[doc.Views[1].HWND];
             }
 #if DEBUG
             //if (ViewObject != null)
@@ -285,18 +294,17 @@ namespace MyVaultBrowser
         private void ApplicationEvents_OnActivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-
             if (BeforeOrAfter == EventTimingEnum.kAfter)
             {
                 var viewHwnd = DocumentObject.Views[1].HWND;
 
-                if (!viewHwndDic.ContainsKey(viewHwnd))
-                    Win32Api.SetEventHook((uint) viewHwnd, (uint) Process.GetCurrentProcess().Id);
-                else
+                if (hwndDic.ContainsKey(viewHwnd))
                 {
                     if (myVaultBrowser.Visible && DocumentObject.Equals(inventorApplication.ActiveDocument))
-                        UpdateVaultBrowser();
+                        UpdateMyVaultBrowser();
                 }
+                else
+                    Win32Api.SetEventHook((uint) viewHwnd, (uint) Process.GetCurrentProcess().Id);
             }
 #if DEBUG
             //Debug.WriteLine($"OnActivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, " +
@@ -305,7 +313,6 @@ namespace MyVaultBrowser
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
-#endregion 
-
+        #endregion Event Handlers
     }
 }
