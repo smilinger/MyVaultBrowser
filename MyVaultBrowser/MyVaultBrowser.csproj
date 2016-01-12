@@ -103,7 +103,9 @@
     <None Include="MyVaultBrowser.X.manifest" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Autodesk.MyVaultBrowser.Inventor.addin" />
+    <None Include="Autodesk.MyVaultBrowser.Inventor.addin">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <None Include="Readme.txt" />
