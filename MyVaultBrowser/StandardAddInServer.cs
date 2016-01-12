@@ -1,8 +1,10 @@
 using Inventor;
 using System;
+using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using static MyVaultBrowser.Win32Api;
 
 namespace MyVaultBrowser
 {
@@ -18,20 +20,86 @@ namespace MyVaultBrowser
         private ApplicationEvents applicationEvents;
         private DockableWindowsEvents dockableWindowsEvents;
         private Application inventorApplication;
-        private static DockableWindow myVaultBrowser;
-        private static View activeView;
+        private DockableWindow myVaultBrowser;
+        private View activeView;
 
         // Dictionary to store the HWND of the view and the corresponding HWND of the vault browser.
-        private static Dictionary<int, IntPtr> hwndDic;
+        private Dictionary<int, IntPtr> hwndDic;
 
-        public static void AddHwnd(int viewHwnd, IntPtr hwnd)
+        private class Hook
+        {
+            private StandardAddInServer parent;
+            private IntPtr hhook = IntPtr.Zero;
+            private uint hview = 0;
+
+            public Hook(StandardAddInServer addin, uint view)
+            {
+                parent = addin;
+                hview = view;
+            }
+
+            public void SetEventHook(uint view, uint idProcess, uint idThread = 0)
+            {
+                // In case the previous hook is not unhooked.
+                //if (hhook != IntPtr.Zero)
+                //    UnHookEvent();
+
+                hview = view;
+
+                // Listen for object create in inventor process.
+                hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
+                    procDelegate, idProcess, idThread, WINEVENT_OUTOFCONTEXT);
+            }
+
+            public void UnHookEvent(IntPtr hhook, int view)
+            {
+                UnhookWinEvent(hhook);
+
+                //set it to Zero again, indicating there is no hook.
+                hhook = IntPtr.Zero;
+                view = 0;
+            }
+
+            private void WinEventProc(IntPtr hWinEventHook, uint eventType,
+                IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime)
+            {
+                // filter out non-window objects... (eg. items within a listbox)
+                if (idObject != 0 || idChild != 0)
+                {
+                    return;
+                }
+
+                // Find a window with class name #32770 (dialog), in which our vault browser lives.
+                var stringBuilder = new StringBuilder(256);
+                var ret = GetClassName(hwnd, stringBuilder, stringBuilder.Capacity);
+
+                if (ret > 0 && stringBuilder.ToString() == DIALOG_CLASS_NAME)
+                {
+                    // Find the parent window and check the title of it,
+                    // if it is Vault, then we are done.
+                    var pHwnd = GetParent(hwnd);
+                    ret = GetWindowText(pHwnd, stringBuilder, stringBuilder.Capacity);
+
+                    if (ret > 0 && stringBuilder.ToString() == "Vault")
+                    {
+                        parent.AddHwnd((int)hview, pHwnd);
+                        //UnHookEvent();
+#if DEBUG
+                        Debug.WriteLine($"Vault Browser: {(int)pHwnd:X}");
+#endif
+                    }
+                }
+            }
+        }
+
+        public void AddHwnd(int viewHwnd, IntPtr hwnd)
         {
             hwndDic[viewHwnd] = hwnd;
             if (myVaultBrowser.Visible)
                 UpdateMyVaultBrowser();
         }
 
-        private static void UpdateMyVaultBrowser()
+        private void UpdateMyVaultBrowser()
         {
             myVaultBrowser.Clear();
             if (hwndDic.ContainsKey(activeView.HWND))
@@ -114,8 +182,8 @@ namespace MyVaultBrowser
             if (activeProjectType == MultiUserModeEnum.kVaultMode)
             {
                 SubscribeEvents();
-                if(inventorApplication.Ready)
-                    ReloadVaultAddin();
+                //if(inventorApplication.Ready)
+                //    ReloadVaultAddin();
             }
 
             activeView = inventorApplication.ActiveView;
@@ -139,10 +207,17 @@ namespace MyVaultBrowser
                 myVaultBrowser =
                     inventorApplication.UserInterfaceManager.DockableWindows["myvaultbrowser"];
             }
+
+#if DEBUG
+            Win32Api.SetEventHook(0, (uint)Process.GetCurrentProcess().Id);
+#endif
         }
 
         public void Deactivate()
         {
+#if DEBUG
+            Win32Api.UnHookEvent();
+#endif
             // Release objects.
             if (activeProjectType == MultiUserModeEnum.kVaultMode)
                 UnSubscribeEvents();
@@ -190,7 +265,7 @@ namespace MyVaultBrowser
                 if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode)
                 {
                     SubscribeEvents();
-                    ReloadVaultAddin();
+                    //ReloadVaultAddin();
                 }
                 else
                 {
@@ -244,20 +319,20 @@ namespace MyVaultBrowser
                         hwndDic[ViewObject.HWND] = hwndDic[doc.Views[1].HWND];
             }
 #if DEBUG
-            //if (ViewObject != null)
-            //    Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
-            //                    $"View: {ViewObject.HWND}, activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
-            //else
-            //    try
-            //    {
-            //    Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {inventorApplication.ActiveDocument.DisplayName}, " +
-            //                    $"activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
-            //    }
-            //    catch
-            //    {
-            //        Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: None, " +
-            //                        $"activeview: None, actualview: None");
-            //    }
+            if (ViewObject != null)
+                Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
+                                $"View: {ViewObject.HWND}, activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
+            else
+                try
+                {
+                    Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {inventorApplication.ActiveDocument.DisplayName}, " +
+                                    $"activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
+                }
+                catch
+                {
+                    Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: None, " +
+                                    $"activeview: None, actualview: None");
+                }
 #endif
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -270,8 +345,8 @@ namespace MyVaultBrowser
                 activeView = ViewObject;
             }
 #if DEBUG
-            //Debug.WriteLine($"OnActivateView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
-            //                $"View: {ViewObject.HWND}, activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
+            Debug.WriteLine($"OnActivateView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
+                            $"View: {ViewObject.HWND}, activeview: {activeView.HWND}, actualview:{inventorApplication.ActiveView.HWND}");
 #endif
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -280,8 +355,8 @@ namespace MyVaultBrowser
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
 #if DEBUG
-            //Debug.WriteLine($"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, " +
-            //                $"activeview: { activeView.HWND}, actualview: { inventorApplication.ActiveView.HWND}");
+            Debug.WriteLine($"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, " +
+                            $"activeview: { activeView.HWND}, actualview: { inventorApplication.ActiveView.HWND}");
 #endif
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
@@ -303,12 +378,14 @@ namespace MyVaultBrowser
                     if (myVaultBrowser.Visible && DocumentObject.Equals(inventorApplication.ActiveDocument))
                         UpdateMyVaultBrowser();
                 }
-                else
-                    Win32Api.SetEventHook((uint) viewHwnd, (uint) Process.GetCurrentProcess().Id);
+                //else
+                //    Win32Api.SetEventHook((uint) viewHwnd, (uint) Process.GetCurrentProcess().Id);
+                Hook test = new Hook(this);
+
             }
 #if DEBUG
-            //Debug.WriteLine($"OnActivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, " +
-            //                $"activeview: {activeView.HWND}, actualview: {inventorApplication.ActiveView.HWND}");
+            Debug.WriteLine($"OnActivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, " +
+                            $"activeview: {activeView.HWND}, actualview: {inventorApplication.ActiveView.HWND}");
 #endif
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
