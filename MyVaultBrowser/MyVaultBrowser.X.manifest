@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+
+<assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
+
+  <assemblyIdentity name="MyVaultBrowser" version="1.0.0.0"></assemblyIdentity>
+
+  <clrClass clsid="{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}" progid="MyVaultBrowser.StandardAddInServer" threadingModel="Both" name="MyVaultBrowser.StandardAddInServer" runtimeVersion=""></clrClass>
+
+  <file name="MyVaultBrowser.dll" hashalg="SHA1"></file>
+
+</assembly>

@@ -1,0 +1,14 @@
+<Addin Type="Standard">
+  <!--Created for Autodesk Inventor Version 20.0-->
+  <ClassId>{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}</ClassId>
+  <ClientId>{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}</ClientId>
+  <DisplayName>MyVaultBrowser</DisplayName>
+  <Description>MyVaultBrowser</Description>
+  <Assembly>MyVaultBrowser.dll</Assembly>
+  <LoadBehavior>1</LoadBehavior>
+  <UserUnloadable>1</UserUnloadable>
+  <Hidden>0</Hidden>
+  <SupportedSoftwareVersionGreaterThan>17..</SupportedSoftwareVersionGreaterThan>
+  <DataVersion>1</DataVersion>
+  <UserInterfaceVersion>1</UserInterfaceVersion>
+</Addin>
