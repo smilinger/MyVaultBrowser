@@ -127,7 +127,7 @@ namespace MyVaultBrowser
             _myVaultBrowser.Clear();
             try
             {
-                if (_hwndDic.ContainsKey(_activeView.HWND))
+                if (_activeView != null && _hwndDic.ContainsKey(_activeView.HWND))
                     _activeView.Document.BrowserPanes["Vault"].Visible = true;
             }
             catch
@@ -270,7 +270,6 @@ namespace MyVaultBrowser
         private void ApplicationEvents_OnActiveProjectChanged(DesignProject ProjectObject, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            //TODO: Before or After.
             if (_activeProjectType != ProjectObject.ProjectType)
             {
                 if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode)
@@ -300,7 +299,7 @@ namespace MyVaultBrowser
         {
             //Debug.WriteLine("DockableWindowsEvents_OnShow");
             if (BeforeOrAfter == EventTimingEnum.kBefore && DockableWindow.InternalName == "myvaultbrowser" &&
-                _hwndDic.ContainsKey(_activeView.HWND))
+                _activeView != null && _hwndDic.ContainsKey(_activeView.HWND))
                 UpdateMyVaultBrowser();
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
