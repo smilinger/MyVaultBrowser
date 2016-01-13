@@ -35,7 +35,7 @@ namespace MyVaultBrowser
 
             // Need to ensure delegate is not garbage collected while we're using it,
             // storing it in a class field is simplest way to do this.
-            private static readonly WinEventDelegate procDelegate = WinEventProc;
+            private static readonly WinEventDelegate _procDelegate = WinEventProc;
 
             public static void Reset(StandardAddInServer parent = null)
             {
@@ -67,7 +67,7 @@ namespace MyVaultBrowser
 
                 // Listen for object create in inventor process.
                 _hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
-                    procDelegate, idProcess, 0, WINEVENT_OUTOFCONTEXT);
+                    _procDelegate, idProcess, 0, WINEVENT_OUTOFCONTEXT);
             }
 
             private static void UnHookEvent()
