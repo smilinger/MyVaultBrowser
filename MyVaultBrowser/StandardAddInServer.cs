@@ -33,6 +33,10 @@ namespace MyVaultBrowser
             private static IntPtr _hhook;
             private static Queue<int> _views;
 
+            // Need to ensure delegate is not garbage collected while we're using it,
+            // storing it in a class field is simplest way to do this.
+            private static readonly WinEventDelegate procDelegate = WinEventProc;
+
             public static void Reset(StandardAddInServer parent = null)
             {
                 if (_parent == null)
@@ -63,7 +67,7 @@ namespace MyVaultBrowser
 
                 // Listen for object create in inventor process.
                 _hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
-                    WinEventProc, idProcess, 0, WINEVENT_OUTOFCONTEXT);
+                    procDelegate, idProcess, 0, WINEVENT_OUTOFCONTEXT);
             }
 
             private static void UnHookEvent()
