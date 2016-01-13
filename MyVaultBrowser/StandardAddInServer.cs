@@ -17,10 +17,10 @@ namespace MyVaultBrowser
     [Guid("ffbbb57a-07f3-4d5c-97b0-e8e302247c7a")]
     public class StandardAddInServer : ApplicationAddInServer
     {
+        private Application _inventorApplication;
         private MultiUserModeEnum _activeProjectType;
         private ApplicationEvents _applicationEvents;
         private DockableWindowsEvents _dockableWindowsEvents;
-        private Application _inventorApplication;
         private DockableWindow _myVaultBrowser;
         private View _activeView;
 
@@ -33,10 +33,20 @@ namespace MyVaultBrowser
             private static IntPtr _hhook;
             private static Queue<int> _views;
 
-            public static void Initialize(StandardAddInServer parent)
+            public static void Reset(StandardAddInServer parent = null)
             {
-                _parent = parent;
-                _views = new Queue<int>();
+                if (_parent == null)
+                {
+                    _parent = parent;
+                    _views = new Queue<int>();
+                }
+                else
+                {
+                    if (_hhook != IntPtr.Zero)
+                        UnHookEvent();
+                    _parent = null;
+                    _views = null;
+                }
             }
 
             public static void AddView(int hview)
@@ -195,26 +205,20 @@ namespace MyVaultBrowser
             _activeView = _inventorApplication.ActiveView;
 
             _hwndDic = new Dictionary<int, IntPtr>();
-            Hook.Initialize(this);
+            Hook.Reset(this);
 
             _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
 
-            if (_myVaultBrowser == null)
+            _myVaultBrowser =
+                _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
+                    "myvaultbrowser", "Vault");
+            _myVaultBrowser.ShowTitleBar = true;
+
+            if (!_myVaultBrowser.IsCustomized)
             {
-                _myVaultBrowser =
-                    _inventorApplication.UserInterfaceManager.DockableWindows.Add(
-                        "{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
-                        "myvaultbrowser", "Vault");
-                _myVaultBrowser.ShowTitleBar = true;
                 _myVaultBrowser.DockingState = DockingStateEnum.kDockRight;
                 _myVaultBrowser.Visible = true;
             }
-            else
-            {
-                _myVaultBrowser =
-                    _inventorApplication.UserInterfaceManager.DockableWindows["myvaultbrowser"];
-            }
-
         }
 
         public void Deactivate()
@@ -231,6 +235,7 @@ namespace MyVaultBrowser
             _activeView = null;
 
             _hwndDic = null;
+            Hook.Reset();
 
             Marshal.ReleaseComObject(_inventorApplication);
             _inventorApplication = null;
