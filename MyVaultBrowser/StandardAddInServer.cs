@@ -217,6 +217,7 @@ namespace MyVaultBrowser
                 _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
                     "myvaultbrowser", "Vault");
             _myVaultBrowser.ShowTitleBar = true;
+            _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
 
             if (!_myVaultBrowser.IsCustomized)
             {
@@ -359,7 +360,7 @@ namespace MyVaultBrowser
                             $"activeview: { _activeView.HWND}, actualview: { _inventorApplication.ActiveView.HWND}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                if (_myVaultBrowser.Visible && DocumentObject == _inventorApplication.ActiveDocument)
+                if (_myVaultBrowser.Visible)
                     RestoreVaultBrowser();
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
