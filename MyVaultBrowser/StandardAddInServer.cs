@@ -1,9 +1,9 @@
 using Inventor;
 using System;
-using System.Text;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
+using System.Text;
 using static MyVaultBrowser.Win32Api;
 // ReSharper disable InconsistentNaming
 
@@ -60,7 +60,7 @@ namespace MyVaultBrowser
 
             private static void SetEventHook()
             {
-                var idProcess = (uint) Process.GetCurrentProcess().Id;
+                var idProcess = (uint)Process.GetCurrentProcess().Id;
 
                 // Listen for object create in inventor process.
                 _hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
@@ -145,14 +145,13 @@ namespace MyVaultBrowser
             _dockableWindowsEvents.OnHide -= DockableWindowsEvents_OnHide;
         }
 
-
         /// <summary>
-        /// This method is used to make sure vault addin is loaded and after our addin, 
+        /// This method is used to make sure vault addin is loaded and after our addin,
         /// so that the event handler in the vault addin is fired after our event handlers.
         /// </summary>
         private void ReloadVaultAddin()
         {
-            ApplicationAddIn vaultAddin =
+            var vaultAddin =
                 _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
             try
             {
@@ -171,89 +170,6 @@ namespace MyVaultBrowser
                 Deactivate();
             }
         }
-
-        #region ApplicationAddInServer Members
-
-        public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
-        {
-            // This method is called by Inventor when it loads the addin.
-            // The AddInSiteObject provides access to the Inventor Application object.
-            // The FirstTime flag indicates if the addin is loaded for the first time.
-
-            // Initialize AddIn members.
-            _inventorApplication = addInSiteObject.Application;
-
-            _applicationEvents = _inventorApplication.ApplicationEvents;
-            _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
-
-            _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
-
-            _hwndDic = new Dictionary<Document, IntPtr>();
-            Hook.Initialize(this);
-
-            _myVaultBrowser =
-                _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
-                    "myvaultbrowser", "Vault");
-            _myVaultBrowser.ShowTitleBar = true;
-            _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
-
-            if (!_myVaultBrowser.IsCustomized)
-            {
-                _myVaultBrowser.DockingState = DockingStateEnum.kDockRight;
-                _myVaultBrowser.Visible = true;
-            }
-
-            _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
-
-            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
-            {
-                SubscribeEvents();
-                if (_inventorApplication.Ready)
-                    ReloadVaultAddin();
-                else
-                    _applicationEvents.OnReady += ApplicationEvents_OnReady;
-            }
-
-        }
-
-        public void Deactivate()
-        {
-            // Release objects.
-            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
-                UnSubscribeEvents();
-            _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
-
-            _dockableWindowsEvents = null;
-            _applicationEvents = null;
-
-            _myVaultBrowser = null;
-
-            _hwndDic = null;
-            Hook.Clear();
-
-            Marshal.ReleaseComObject(_inventorApplication);
-            _inventorApplication = null;
-
-            GC.Collect();
-            GC.WaitForPendingFinalizers();
-        }
-
-        public void ExecuteCommand(int commandId)
-        {
-            // Note:this method is now obsolete, you should use the
-            // ControlDefinition functionality for implementing commands.
-        }
-
-        public object Automation
-        {
-            // This property is provided to allow the AddIn to expose an API
-            // of its own to other programs. Typically, this  would be done by
-            // implementing the AddIn's API interface in a class and returning
-            // that class object through this property.
-            get { return null; }
-        }
-
-        #endregion ApplicationAddInServer Members
 
         #region Event Handlers
 
@@ -357,5 +273,87 @@ namespace MyVaultBrowser
         }
 
         #endregion Event Handlers
+
+        #region ApplicationAddInServer Members
+
+        public void Activate(ApplicationAddInSite addInSiteObject, bool firstTime)
+        {
+            // This method is called by Inventor when it loads the addin.
+            // The AddInSiteObject provides access to the Inventor Application object.
+            // The FirstTime flag indicates if the addin is loaded for the first time.
+
+            // Initialize AddIn members.
+            _inventorApplication = addInSiteObject.Application;
+
+            _applicationEvents = _inventorApplication.ApplicationEvents;
+            _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
+
+            _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
+
+            _hwndDic = new Dictionary<Document, IntPtr>();
+            Hook.Initialize(this);
+
+            _myVaultBrowser =
+                _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
+                    "myvaultbrowser", "Vault");
+            _myVaultBrowser.ShowTitleBar = true;
+            _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
+
+            if (!_myVaultBrowser.IsCustomized)
+            {
+                _myVaultBrowser.DockingState = DockingStateEnum.kDockRight;
+                _myVaultBrowser.Visible = true;
+            }
+
+            _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
+
+            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+            {
+                SubscribeEvents();
+                if (_inventorApplication.Ready)
+                    ReloadVaultAddin();
+                else
+                    _applicationEvents.OnReady += ApplicationEvents_OnReady;
+            }
+        }
+
+        public void Deactivate()
+        {
+            // Release objects.
+            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+                UnSubscribeEvents();
+            _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
+
+            _dockableWindowsEvents = null;
+            _applicationEvents = null;
+
+            _myVaultBrowser = null;
+
+            _hwndDic = null;
+            Hook.Clear();
+
+            Marshal.ReleaseComObject(_inventorApplication);
+            _inventorApplication = null;
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+        }
+
+        public void ExecuteCommand(int commandId)
+        {
+            // Note:this method is now obsolete, you should use the
+            // ControlDefinition functionality for implementing commands.
+        }
+
+        public object Automation
+        {
+            // This property is provided to allow the AddIn to expose an API
+            // of its own to other programs. Typically, this  would be done by
+            // implementing the AddIn's API interface in a class and returning
+            // that class object through this property.
+            get { return null; }
+        }
+
+        #endregion ApplicationAddInServer Members
     }
 }
