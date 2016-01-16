@@ -88,6 +88,7 @@
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
       <HintPath>C:\Windows\Microsoft.NET\assembly\GAC_MSIL\Autodesk.Inventor.Interop\v4.0_20.0.0.0__d84147f8b4276564\Autodesk.Inventor.Interop.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="System">
       <Name>System</Name>
