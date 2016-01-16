@@ -133,9 +133,7 @@ namespace MyVaultBrowser
         {
             _applicationEvents.OnActivateDocument += ApplicationEvents_OnActivateDocument;
             _applicationEvents.OnDeactivateDocument += ApplicationEvents_OnDeactivateDocument;
-            _applicationEvents.OnNewView += ApplicationEvents_OnNewView;
             _applicationEvents.OnCloseView += ApplicationEvents_OnCloseView;
-            _applicationEvents.OnActivateView += ApplicationEvents_OnActivateView;
             _dockableWindowsEvents.OnShow += DockableWindowsEvents_OnShow;
             _dockableWindowsEvents.OnHide += DockableWindowsEvents_OnHide;
         }
@@ -144,9 +142,7 @@ namespace MyVaultBrowser
         {
             _applicationEvents.OnActivateDocument -= ApplicationEvents_OnActivateDocument;
             _applicationEvents.OnDeactivateDocument -= ApplicationEvents_OnDeactivateDocument;
-            _applicationEvents.OnNewView -= ApplicationEvents_OnNewView;
             _applicationEvents.OnCloseView -= ApplicationEvents_OnCloseView;
-            _applicationEvents.OnActivateView -= ApplicationEvents_OnActivateView;
             _dockableWindowsEvents.OnShow -= DockableWindowsEvents_OnShow;
             _dockableWindowsEvents.OnHide -= DockableWindowsEvents_OnHide;
         }
@@ -310,50 +306,11 @@ namespace MyVaultBrowser
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
-        private void ApplicationEvents_OnNewView(View ViewObject, EventTimingEnum BeforeOrAfter, NameValueMap Context,
-            out HandlingCodeEnum HandlingCode)
-        {
-            if (BeforeOrAfter == EventTimingEnum.kAfter)
-            {
-                //var doc = ViewObject.Document;
-                //if (doc.Views.Count > 1 && _hwndDic.ContainsKey(doc.Views[1].HWND))
-                //    _hwndDic[ViewObject.HWND] = _hwndDic[doc.Views[1].HWND];
-            }
-#if DEBUG
-            //if (ViewObject != null)
-            //    Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
-            //                    $"View: {ViewObject.HWND}, activeview: {_inventorApplication.ActiveDocument.DisplayName}, actualview:{_inventorApplication.ActiveView.HWND}");
-            //else
-            //    try
-            //    {
-            //        Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: {_inventorApplication.ActiveDocument.DisplayName}, " +
-            //                        $"activeview: {_inventorApplication.ActiveDocument.DisplayName}, actualview:{_inventorApplication.ActiveView.HWND}");
-            //    }
-            //    catch
-            //    {
-            //        Debug.WriteLine($"OnNewView: {BeforeOrAfter}, Document: None, activeview: None, actualview: None");
-            //    }
-#endif
-            HandlingCode = HandlingCodeEnum.kEventNotHandled;
-        }
-
-        private void ApplicationEvents_OnActivateView(View ViewObject, EventTimingEnum BeforeOrAfter,
-            NameValueMap Context, out HandlingCodeEnum HandlingCode)
-        {
-            if (BeforeOrAfter == EventTimingEnum.kAfter)
-            {
-                //_inventorApplication.ActiveDocument = ViewObject;
-            }
-            //Debug.WriteLine($"OnActivateView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, " +
-            //                $"View: {ViewObject.HWND}, activeview: {_inventorApplication.ActiveDocument.HWND}, actualview:{_inventorApplication.ActiveView.HWND}");
-            HandlingCode = HandlingCodeEnum.kEventNotHandled;
-        }
-
         private void ApplicationEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            //Debug.WriteLine(
-            //    $"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
+            Debug.WriteLine(
+                $"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 if (_myVaultBrowser.Visible)
