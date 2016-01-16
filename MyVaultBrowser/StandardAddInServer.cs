@@ -152,19 +152,23 @@ namespace MyVaultBrowser
         /// </summary>
         private void ReloadVaultAddin()
         {
+            ApplicationAddIn vaultAddin =
+                _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
             try
             {
-                ApplicationAddIn vaultAddin =
-                    _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
-                if (vaultAddin.Activated)
-                {
-                    vaultAddin.Deactivate();
-                }
+                vaultAddin.Deactivate();
+                if (_inventorApplication.ActiveDocument != null)
+                    Hook.AddDocument(_inventorApplication.ActiveDocument);
                 vaultAddin.Activate();
             }
             catch
             {
                 //
+            }
+            if (!vaultAddin.Activated)
+            {
+                Debug.WriteLine("Cannot load vault addin, MyVaultBrowser will not work!");
+                Deactivate();
             }
         }
 
@@ -183,17 +187,9 @@ namespace MyVaultBrowser
             _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
-            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
-            {
-                SubscribeEvents();
-                if (_inventorApplication.Ready)
-                    ReloadVaultAddin();
-            }
 
             _hwndDic = new Dictionary<Document, IntPtr>();
             Hook.Initialize(this);
-
-            _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
 
             _myVaultBrowser =
                 _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
@@ -205,6 +201,17 @@ namespace MyVaultBrowser
             {
                 _myVaultBrowser.DockingState = DockingStateEnum.kDockRight;
                 _myVaultBrowser.Visible = true;
+            }
+
+            _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
+
+            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+            {
+                SubscribeEvents();
+                if (_inventorApplication.Ready)
+                    ReloadVaultAddin();
+                else
+                    _applicationEvents.OnReady += ApplicationEvents_OnReady;
             }
 
         }
@@ -249,6 +256,13 @@ namespace MyVaultBrowser
         #endregion ApplicationAddInServer Members
 
         #region Event Handlers
+
+        private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        {
+            ReloadVaultAddin();
+            _applicationEvents.OnReady -= ApplicationEvents_OnReady;
+            HandlingCode = HandlingCodeEnum.kEventNotHandled;
+        }
 
         private void ApplicationEvents_OnActiveProjectChanged(DesignProject ProjectObject, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
