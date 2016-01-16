@@ -1,3 +1,4 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Addin Type="Standard">
   <!--Created for Autodesk Inventor Version 20.0-->
   <ClassId>{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}</ClassId>
@@ -6,6 +7,7 @@
   <Description>MyVaultBrowser</Description>
   <Assembly>MyVaultBrowser.dll</Assembly>
   <LoadBehavior>0</LoadBehavior>
+  <LoadOnStartUp>1</LoadOnStartUp>
   <UserUnloadable>1</UserUnloadable>
   <Hidden>0</Hidden>
   <SupportedSoftwareVersionGreaterThan>17..</SupportedSoftwareVersionGreaterThan>
