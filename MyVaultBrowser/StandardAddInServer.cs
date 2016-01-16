@@ -36,20 +36,18 @@ namespace MyVaultBrowser
             // storing it in a class field is simplest way to do this.
             private static readonly WinEventDelegate _procDelegate = WinEventProc;
 
-            public static void Reset(StandardAddInServer parent = null)
+            public static void Initialize(StandardAddInServer parent)
             {
-                if (_parent == null)
-                {
-                    _parent = parent;
-                    _documents = new Queue<Document>();
-                }
-                else
-                {
-                    if (_hhook != IntPtr.Zero)
-                        UnHookEvent();
-                    _parent = null;
-                    _documents = null;
-                }
+                _parent = parent;
+                _documents = new Queue<Document>();
+            }
+
+            public static void Clear()
+            {
+                if (_hhook != IntPtr.Zero)
+                    UnHookEvent();
+                _parent = null;
+                _documents = null;
             }
 
             public static void AddDocument(Document doc)
@@ -193,7 +191,7 @@ namespace MyVaultBrowser
             }
 
             _hwndDic = new Dictionary<Document, IntPtr>();
-            Hook.Reset(this);
+            Hook.Initialize(this);
 
             _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
 
@@ -224,7 +222,7 @@ namespace MyVaultBrowser
             _myVaultBrowser = null;
 
             _hwndDic = null;
-            Hook.Reset();
+            Hook.Clear();
 
             Marshal.ReleaseComObject(_inventorApplication);
             _inventorApplication = null;
