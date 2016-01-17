@@ -240,8 +240,9 @@ namespace MyVaultBrowser
         {
             if (DockableWindow.InternalName == "myvaultbrowser")
             {
-                if (BeforeOrAfter == EventTimingEnum.kBefore && _inventorApplication.ActiveDocument != null)
-                    RestoreVaultBrowser(_inventorApplication.ActiveDocument);
+                var doc = _inventorApplication.ActiveDocument;
+                if (BeforeOrAfter == EventTimingEnum.kBefore && doc != null && _hwndDic.ContainsKey(doc))
+                    RestoreVaultBrowser(doc);
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -252,7 +253,7 @@ namespace MyVaultBrowser
             Debug.WriteLine("DockableWindowsEvents_OnShow");
             if (DockableWindow.InternalName == "myvaultbrowser")
             {
-                Document doc = _inventorApplication.ActiveDocument;
+                var doc = _inventorApplication.ActiveDocument;
                 if (BeforeOrAfter == EventTimingEnum.kBefore && doc != null && _hwndDic.ContainsKey(doc))
                     UpdateMyVaultBrowser(doc);
             }
@@ -278,7 +279,7 @@ namespace MyVaultBrowser
                 $"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                if (_myVaultBrowser.Visible)
+                if (_myVaultBrowser.Visible && _hwndDic.ContainsKey(DocumentObject))
                     RestoreVaultBrowser(DocumentObject);
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
