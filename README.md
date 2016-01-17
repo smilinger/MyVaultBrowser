@@ -5,11 +5,32 @@ Seperate vault browser for Autodesk Inventor
 This addin is basically a hack, it uses win32 p/invoke to get the original vault browser, and uses it with a new dockable window. So the user interface and vault functions are exactly the same as the original vault browser, don't expect there will be more features than the original.
 
 ## Feature and Usage
-It is simple:
+* The new MyVaultBrowser window is visible by default for the first time the addin is loaded. After that Inventor should remember its visibility, floating position or docking state.
+* You can dock or undock the window as you like, just like any other dockable windows in inventor.
 * Open it from View -> Windows -> User Interface if it's closed.
-* The original vault browser is hidden when MyVaultBrowser is used.
+* The original vault browser is hidden when MyVaultBrowser is open.
 * The original vault browser is back when MyVaultBrowser is closed.
-* Dock or undock as you want.
+* From v0.9.3, MyVaultBrowser also supports keyboard shortcut to open or close the browser, the default keyboard shortcut is "Ctrl+`", you can use other shortcuts as you like, for example, "Ctrl+1", "Alt+Z", "Ctrl+Alt+Z", but be careful not use those already assigned to other commands in inventor. You can also use alias type shortcuts like "B" or "BB", however alias type shortcuts may not work sometimes. The setting will be saved to the following location when the addin is loaded the first time:
+  * For Inventor 2014
+    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_ow5451lkj52xbizxdtghrf2pdfathyhr\Autodesk®_Inventor®_2014\user.config
+  * For Inventor 2015
+    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_dyn3yltervsx4dgsvto5pwd10whykmwn\Autodesk®_Inventor®_2015\user.config
+  * For Inventor 2016
+    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_wts00mmfdaa1a2jhamx4xvzf21fh4mec\Autodesk_Inventor_2016\user.config
+
+```xml
+  ...
+    <userSettings>
+        <MyVaultBrowser.Properties.Settings>
+            <setting name="ShortCut" serializeAs="String">
+                <value>B</value>
+            </setting>
+        </MyVaultBrowser.Properties.Settings>
+  ...
+```
+  Actually it is the same file where inventor store its ilogic configuration, the folder name may be different sometimes in different machines.
+* The addin will force vault addin to load even if you have set vault addin to not load automatically, if you don't like this, you can set this addin to load manually in the Add-in Manager.
+* If you unload/reload vault addin manually from the Add-in Manager, please also remember to unload/reload MyVaultBrowser addin, otherwise something bad may happen.
 
 See http://autode.sk/1PRIwiJ for very simple demonstration.
 
