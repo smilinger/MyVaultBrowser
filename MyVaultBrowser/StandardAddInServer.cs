@@ -266,9 +266,16 @@ namespace MyVaultBrowser
             Debug.WriteLine(
                 $"OnCloseView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, Number of Views: {ViewObject.Document.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
+            {
+                var doc = ViewObject.Document;
                 //Sometimes user may have opened multiple windows for one document.
-                if (ViewObject.Document.Views.Count == 1)
-                    _hwndDic.Remove(ViewObject.Document);
+                if (doc.Views.Count == 1)
+                {
+                    _hwndDic.Remove(doc);
+                    if (doc == _inventorApplication.ActiveDocument)
+                        _myVaultBrowser.Clear();
+                }
+            }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
