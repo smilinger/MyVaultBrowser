@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Windows.Forms;
+using MyVaultBrowser.Properties;
 using static MyVaultBrowser.Win32Api;
 // ReSharper disable InconsistentNaming
 
@@ -17,10 +19,12 @@ namespace MyVaultBrowser
     [Guid("ffbbb57a-07f3-4d5c-97b0-e8e302247c7a")]
     public class StandardAddInServer : ApplicationAddInServer
     {
-        private Application _inventorApplication;
+        private Inventor.Application _inventorApplication;
         private MultiUserModeEnum _activeProjectType;
         private ApplicationEvents _applicationEvents;
         private DockableWindowsEvents _dockableWindowsEvents;
+        private UserInterfaceEvents _userInterfaceEvents;
+
         private DockableWindow _myVaultBrowser;
 
         // Dictionary to store the documents and the corresponding HWNDs of the vault browser.
@@ -96,7 +100,7 @@ namespace MyVaultBrowser
                     if (ret > 0 && stringBuilder.ToString() == "Vault")
                     {
                         Document doc;
-                        _parent._hwndDic[doc = _documents.Dequeue()] = pHwnd;//
+                        _parent._hwndDic[doc = _documents.Dequeue()] = pHwnd;
                         if (_documents.Count == 0)
                             UnHookEvent();
                         if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
@@ -122,8 +126,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                //If the document is closing, the vault browser may not be there anymore,
-                //or if vault addin is not loaded?
+                //The document becomes inaccessible too soon sometimes.
             }
         }
 
@@ -156,26 +159,56 @@ namespace MyVaultBrowser
             try
             {
                 vaultAddin.Deactivate();
+
+                //The user may reload the addin when file is still open,
+                //then the vault browser will be recreated, we need to capture it.
                 if (_inventorApplication.ActiveDocument != null)
                     Hook.AddDocument(_inventorApplication.ActiveDocument);
                 vaultAddin.Activate();
             }
             catch
             {
-                //
+                MessageBox.Show("Unable to load vault addin! MyVaultBrowser will not load.", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!vaultAddin.Activated)
             {
-                Debug.WriteLine("Cannot load vault addin, MyVaultBrowser will not work!");
                 Deactivate();
+            }
+        }
+
+        private void SetShortCut()
+        {
+            var shortCut = Settings.Default.ShortCut;
+            if (shortCut == "")
+            {
+                Settings.Default.ShortCut = "Ctrl+`";
+                Settings.Default.Save();
+            }
+            try
+            {
+                _myVaultBrowser.VisibilityControl.OverrideShortcut = shortCut;
+            }
+            catch
+            {
+                MessageBox.Show("The shortcut key for MyVaultBrowser is not acceptable by inventor!", "Warning",
+                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
         }
 
         #region Event Handlers
 
+        private void UserInterfaceEvents_OnResetShortcuts(NameValueMap Context)
+        {
+            if (_myVaultBrowser != null)
+                SetShortCut();
+        }
+
         private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            ReloadVaultAddin();
+            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+                ReloadVaultAddin();
+            SetShortCut();
             _applicationEvents.OnReady -= ApplicationEvents_OnReady;
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -223,12 +256,13 @@ namespace MyVaultBrowser
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
-        private void ApplicationEvents_OnCloseView(View ViewObject, EventTimingEnum BeforeOrAfter, NameValueMap Context,
+        private void ApplicationEvents_OnCloseView(Inventor.View ViewObject, EventTimingEnum BeforeOrAfter, NameValueMap Context,
             out HandlingCodeEnum HandlingCode)
         {
             Debug.WriteLine(
                 $"OnCloseView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, Number of Views: {ViewObject.Document.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
+                //Sometimes user may have opened multiple windows for one document.
                 if (ViewObject.Document.Views.Count == 1)
                     _hwndDic.Remove(ViewObject.Document);
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
@@ -254,16 +288,20 @@ namespace MyVaultBrowser
             {
                 if (_hwndDic.ContainsKey(DocumentObject))
                 {
+                    //If user is opening multiple files one time, the active document may not be it anymore.
                     if (DocumentObject == _inventorApplication.ActiveDocument)
                     {
                         if (_myVaultBrowser.Visible)
                             UpdateMyVaultBrowser(DocumentObject);
                         else
+                            //This is not needed most of the time, 
+                            //however it is needed when using redo to reopen closed files.
                             DocumentObject.BrowserPanes["Vault"].Visible = true;
                     }
                 }
                 else
                 {
+                    //Start capture the vault browser.
                     Hook.AddDocument(DocumentObject);
                 }
             }
@@ -287,6 +325,7 @@ namespace MyVaultBrowser
 
             _applicationEvents = _inventorApplication.ApplicationEvents;
             _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
+            _userInterfaceEvents = _inventorApplication.UserInterfaceManager.UserInterfaceEvents;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
 
@@ -306,14 +345,15 @@ namespace MyVaultBrowser
             }
 
             _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
+            if (!_inventorApplication.Ready)
+                _applicationEvents.OnReady += ApplicationEvents_OnReady;
+            _userInterfaceEvents.OnResetShortcuts += UserInterfaceEvents_OnResetShortcuts;
 
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
             {
                 SubscribeEvents();
                 if (_inventorApplication.Ready)
                     ReloadVaultAddin();
-                else
-                    _applicationEvents.OnReady += ApplicationEvents_OnReady;
             }
         }
 
@@ -323,7 +363,9 @@ namespace MyVaultBrowser
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
                 UnSubscribeEvents();
             _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
+            _userInterfaceEvents.OnResetShortcuts -= UserInterfaceEvents_OnResetShortcuts;
 
+            _userInterfaceEvents = null;
             _dockableWindowsEvents = null;
             _applicationEvents = null;
 
