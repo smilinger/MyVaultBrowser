@@ -27,6 +27,9 @@ namespace MyVaultBrowser
 
         private DockableWindow _myVaultBrowser;
 
+        //Keep the reference of the vault addin so we can query its status anytime.
+        private ApplicationAddIn _vaultAddin;
+
         // Dictionary to store the documents and the corresponding HWNDs of the vault browser.
         private Dictionary<Document, IntPtr> _hwndDic;
 
@@ -154,24 +157,22 @@ namespace MyVaultBrowser
         /// </summary>
         private void ReloadVaultAddin()
         {
-            var vaultAddin =
-                _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
             try
             {
-                vaultAddin.Deactivate();
+                _vaultAddin.Deactivate();
 
                 //The user may reload the addin when file is still open,
                 //then the vault browser will be recreated, we need to capture it.
                 if (_inventorApplication.ActiveDocument != null)
                     Hook.AddDocument(_inventorApplication.ActiveDocument);
-                vaultAddin.Activate();
+                _vaultAddin.Activate();
             }
             catch
             {
                 MessageBox.Show("Unable to load vault addin! MyVaultBrowser will not load.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
-            if (!vaultAddin.Activated)
+            if (!_vaultAddin.Activated)
             {
                 UnSubscribeEvents();
             }
@@ -305,6 +306,7 @@ namespace MyVaultBrowser
                 else
                 {
                     //Start capture the vault browser.
+                    
                     Hook.AddDocument(DocumentObject);
                 }
             }
@@ -331,6 +333,8 @@ namespace MyVaultBrowser
             _userInterfaceEvents = _inventorApplication.UserInterfaceManager.UserInterfaceEvents;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
+
+            _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
 
             _hwndDic = new Dictionary<Document, IntPtr>();
             Hook.Initialize(this);
@@ -371,6 +375,8 @@ namespace MyVaultBrowser
             _userInterfaceEvents = null;
             _dockableWindowsEvents = null;
             _applicationEvents = null;
+
+            _vaultAddin = null;
 
             _myVaultBrowser = null;
 
