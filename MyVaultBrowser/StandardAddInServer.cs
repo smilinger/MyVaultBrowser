@@ -173,7 +173,7 @@ namespace MyVaultBrowser
             }
             if (!vaultAddin.Activated)
             {
-                Deactivate();
+                UnSubscribeEvents();
             }
         }
 
@@ -205,11 +205,13 @@ namespace MyVaultBrowser
                 SetShortCut();
         }
 
-        private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context, out HandlingCodeEnum HandlingCode)
+        private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context,
+            out HandlingCodeEnum HandlingCode)
         {
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
                 ReloadVaultAddin();
-            SetShortCut();
+            if (_myVaultBrowser != null)
+                SetShortCut();
             _applicationEvents.OnReady -= ApplicationEvents_OnReady;
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
