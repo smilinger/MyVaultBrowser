@@ -182,7 +182,8 @@ namespace MyVaultBrowser
             var shortCut = Settings.Default.ShortCut;
             if (shortCut == "")
             {
-                Settings.Default.ShortCut = "Ctrl+`";
+                shortCut = "Ctrl+`";
+                Settings.Default.ShortCut = shortCut;
                 Settings.Default.Save();
             }
             try
