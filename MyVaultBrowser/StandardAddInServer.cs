@@ -151,6 +151,28 @@ namespace MyVaultBrowser
             _dockableWindowsEvents.OnHide -= DockableWindowsEvents_OnHide;
         }
 
+        private void TryLoadVaultAddin()
+        {
+            if (_vaultAddin.Activated)
+            {
+                SubscribeEvents();
+                ReloadVaultAddin();
+            }
+            else
+            {
+                var result =
+                    MessageBox.Show(
+                        "MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. " +
+                        "Do you want to load vault addin to use MyVaultBrowser?",
+                        "MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                if (result == DialogResult.Yes)
+                {
+                    SubscribeEvents();
+                    ReloadVaultAddin();
+                }
+            }
+        }
+
         /// <summary>
         /// This method is used to make sure vault addin is loaded and after our addin,
         /// so that the event handler in the vault addin is fired after our event handlers.
@@ -169,7 +191,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show("Unable to load vault addin! MyVaultBrowser will not load.", "Warning",
+                MessageBox.Show("Unable to reload vault addin! MyVaultBrowser will not work.", "Warning",
                     MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!_vaultAddin.Activated)
@@ -210,10 +232,11 @@ namespace MyVaultBrowser
             out HandlingCodeEnum HandlingCode)
         {
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
-                ReloadVaultAddin();
+                TryLoadVaultAddin();
             if (_myVaultBrowser != null)
                 SetShortCut();
-            _applicationEvents.OnReady -= ApplicationEvents_OnReady;
+            if (_applicationEvents != null)
+                _applicationEvents.OnReady -= ApplicationEvents_OnReady;
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
@@ -222,7 +245,7 @@ namespace MyVaultBrowser
         {
             if (_activeProjectType != ProjectObject.ProjectType)
             {
-                if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode)
+                if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode & _vaultAddin.Activated)
                 {
                     SubscribeEvents();
                     ReloadVaultAddin();
@@ -360,16 +383,16 @@ namespace MyVaultBrowser
             }
 
             _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
-            if (!_inventorApplication.Ready)
-                _applicationEvents.OnReady += ApplicationEvents_OnReady;
             _userInterfaceEvents.OnResetShortcuts += UserInterfaceEvents_OnResetShortcuts;
 
-            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+            if (_inventorApplication.Ready)
             {
-                SubscribeEvents();
-                if (_inventorApplication.Ready)
-                    ReloadVaultAddin();
+                if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+                    TryLoadVaultAddin();
             }
+            else
+                _applicationEvents.OnReady += ApplicationEvents_OnReady;
+
         }
 
         public void Deactivate()
