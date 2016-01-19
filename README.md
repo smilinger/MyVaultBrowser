@@ -10,7 +10,7 @@ This addin is basically a hack, it uses win32 p/invoke to get the original vault
 * Open it from View -> Windows -> User Interface if it's closed.
 * The original vault browser is hidden when MyVaultBrowser is open.
 * The original vault browser is back when MyVaultBrowser is closed.
-* From v0.9.3, MyVaultBrowser also supports keyboard shortcut to open or close the browser, the default keyboard shortcut is "Ctrl+`", you can use other shortcuts as you like, for example, "Ctrl+1", "Alt+Z", "Ctrl+Alt+Z", but be careful not use those already assigned to other commands in inventor. You can also use alias type shortcuts like "B" or "BB", however alias type shortcuts may not work sometimes. The setting will be saved to the following location when the addin is loaded the first time:
+* From v0.9.3, MyVaultBrowser also supports keyboard shortcut to open or close the browser, the default keyboard shortcut is "Ctrl+`", you can use other shortcuts as you like, for example, "Ctrl+1", "Alt+A", "Ctrl+Alt+Z", but be careful not use those already assigned to other commands in inventor. You can also use alias type shortcuts like "B" or "BB", however alias type shortcuts may not work sometimes. You need to manually modify the config file to change shortcuts, the setting will be saved to the following location when the addin is loaded the first time:
   * For Inventor 2014
     * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_ow5451lkj52xbizxdtghrf2pdfathyhr\Autodesk®_Inventor®_2014\user.config
   * For Inventor 2015
@@ -29,7 +29,7 @@ This addin is basically a hack, it uses win32 p/invoke to get the original vault
   ...
 ```
   Actually it is the same file where inventor store its ilogic configuration, the folder name may be different sometimes in different machines.
-* The addin will force vault addin to load even if you have set vault addin to not load automatically, if you don't like this, you can set this addin to load manually in the Add-in Manager.
+* When startup, the addin will check the status of the vault addin, if vault addin is not loaded, it will ask user to load the vault addin.
 * If you unload/reload vault addin manually from the Add-in Manager, please also remember to unload/reload MyVaultBrowser addin, otherwise something bad may happen.
 
 See http://autode.sk/1PRIwiJ for very simple demonstration.
