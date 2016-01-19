@@ -91,16 +91,16 @@ namespace MyVaultBrowser
 
                 // Find a window with class name #32770 (dialog), in which our vault browser lives.
                 var stringBuilder = new StringBuilder(256);
-                var ret = GetClassName(hwnd, stringBuilder, stringBuilder.Capacity);
+                GetClassName(hwnd, stringBuilder, stringBuilder.Capacity);
 
-                if (ret > 0 && stringBuilder.ToString() == DIALOG_CLASS_NAME)
+                if (stringBuilder.ToString() == DIALOG_CLASS_NAME)
                 {
                     // Find the parent window and check the title of it,
                     // if it is Vault, then we are done.
                     var pHwnd = GetParent(hwnd);
-                    ret = GetWindowText(pHwnd, stringBuilder, stringBuilder.Capacity);
+                    GetWindowText(pHwnd, stringBuilder, stringBuilder.Capacity);
 
-                    if (ret > 0 && stringBuilder.ToString() == "Vault")
+                    if (stringBuilder.ToString() == "Vault")
                     {
                         Document doc;
                         _parent._hwndDic[doc = _documents.Dequeue()] = pHwnd;
@@ -262,10 +262,10 @@ namespace MyVaultBrowser
         private void DockableWindowsEvents_OnHide(DockableWindow DockableWindow, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            if (DockableWindow.InternalName == "myvaultbrowser")
+            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 var doc = _inventorApplication.ActiveDocument;
-                if (BeforeOrAfter == EventTimingEnum.kBefore && doc != null && _hwndDic.ContainsKey(doc))
+                if (doc != null && _hwndDic.ContainsKey(doc))
                     RestoreVaultBrowser(doc);
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
@@ -275,10 +275,10 @@ namespace MyVaultBrowser
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             Debug.WriteLine("DockableWindowsEvents_OnShow");
-            if (DockableWindow.InternalName == "myvaultbrowser")
+            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore )
             {
                 var doc = _inventorApplication.ActiveDocument;
-                if (BeforeOrAfter == EventTimingEnum.kBefore && doc != null && _hwndDic.ContainsKey(doc))
+                if (doc != null && _hwndDic.ContainsKey(doc))
                     UpdateMyVaultBrowser(doc);
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
@@ -329,15 +329,13 @@ namespace MyVaultBrowser
                         if (_myVaultBrowser.Visible)
                             UpdateMyVaultBrowser(DocumentObject);
                         else
-                            //This is not needed most of the time, 
-                            //however it is needed when using redo to reopen closed files.
+                            //This is only needed in very rare case, such as using redo to reopen closed files.
                             DocumentObject.BrowserPanes["Vault"].Visible = true;
                     }
                 }
                 else
                 {
                     //Start capture the vault browser.
-                    
                     Hook.AddDocument(DocumentObject);
                 }
             }
@@ -365,7 +363,7 @@ namespace MyVaultBrowser
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
 
-            _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48B682BC-42E6-4953-84C5-3D253B52E77B}"];
+            _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48b682bc-42e6-4953-84c5-3d253b52e77b}"];
 
             _hwndDic = new Dictionary<Document, IntPtr>();
             Hook.Initialize(this);
