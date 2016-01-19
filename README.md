@@ -18,19 +18,19 @@ This addin is basically a hack, it uses win32 p/invoke to get the original vault
   * For Inventor 2016
     * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_wts00mmfdaa1a2jhamx4xvzf21fh4mec\Autodesk_Inventor_2016\user.config
 
-```xml
-  ...
-    <userSettings>
-        <MyVaultBrowser.Properties.Settings>
-            <setting name="ShortCut" serializeAs="String">
-                <value>B</value>
-            </setting>
-        </MyVaultBrowser.Properties.Settings>
-  ...
-```
+  ```xml
+    ...
+      <userSettings>
+          <MyVaultBrowser.Properties.Settings>
+              <setting name="ShortCut" serializeAs="String">
+                  <value>B</value>
+              </setting>
+          </MyVaultBrowser.Properties.Settings>
+    ...
+  ```
   Actually it is the same file where inventor store its ilogic configuration, the folder name may be different sometimes in different machines.
 * When startup, the addin will check the status of the vault addin, if vault addin is not loaded, it will ask user to load the vault addin.
-* If you unload/reload vault addin manually from the Add-in Manager, please also remember to unload/reload MyVaultBrowser addin, otherwise something bad may happen.
+* If you unload/reload vault addin manually from the Add-in Manager, MyVaultBrowser will stop working, you need to unload/reload MyVaultBrowser addin to make it work again.
 
 See http://autode.sk/1PRIwiJ for very simple demonstration.
 
@@ -43,7 +43,7 @@ Unzip and copy the folder to either of these locations:
 
 ## How to Build
 The code is written with VS2015, some new feature in C# 6 is used in the code, you may need to change these new feature code to build in lower VS versions.
-The code is not so elegant as you may expect, because I am just amateur programmer, feel free to fork and modify it as you need.
+The code is not so elegant as you may expect, feel free to fork and modify it as you need.
 
 ## License
 Copyright (c) 2016 smilinger
