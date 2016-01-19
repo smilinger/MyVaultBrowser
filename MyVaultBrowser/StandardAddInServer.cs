@@ -264,9 +264,16 @@ namespace MyVaultBrowser
         {
             if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                var doc = _inventorApplication.ActiveDocument;
-                if (doc != null && _hwndDic.ContainsKey(doc))
-                    RestoreVaultBrowser(doc);
+                if (_vaultAddin.Activated)
+                {
+                    var doc = _inventorApplication.ActiveDocument;
+                    if (doc != null && _hwndDic.ContainsKey(doc))
+                        RestoreVaultBrowser(doc);
+                }
+                else
+                {
+                    UnSubscribeEvents();
+                }
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -275,11 +282,18 @@ namespace MyVaultBrowser
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             Debug.WriteLine("DockableWindowsEvents_OnShow");
-            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore )
+            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore)
             {
-                var doc = _inventorApplication.ActiveDocument;
-                if (doc != null && _hwndDic.ContainsKey(doc))
-                    UpdateMyVaultBrowser(doc);
+                if (_vaultAddin.Activated)
+                {
+                    var doc = _inventorApplication.ActiveDocument;
+                    if (doc != null && _hwndDic.ContainsKey(doc))
+                        UpdateMyVaultBrowser(doc);
+                }
+                else
+                {
+                    UnSubscribeEvents();
+                }
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
@@ -329,7 +343,7 @@ namespace MyVaultBrowser
                         if (_myVaultBrowser.Visible)
                             UpdateMyVaultBrowser(DocumentObject);
                         else
-                            //This is only needed in very rare case, such as using redo to reopen closed files.
+                        //This is only needed in very rare case, such as using redo to reopen closed files.
                             DocumentObject.BrowserPanes["Vault"].Visible = true;
                     }
                 }
@@ -338,6 +352,11 @@ namespace MyVaultBrowser
                     //Start capture the vault browser.
                     Hook.AddDocument(DocumentObject);
                 }
+            }
+            else
+            {
+                if (!_vaultAddin.Activated)
+                    UnSubscribeEvents();
             }
             Debug.WriteLine(
                 $"OnActivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
