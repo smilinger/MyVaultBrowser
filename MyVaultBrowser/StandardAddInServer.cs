@@ -185,6 +185,7 @@ namespace MyVaultBrowser
 
                 //The user may reload the addin when file is still open,
                 //then the vault browser will be recreated, we need to capture it.
+                _hwndDic.Clear();
                 if (_inventorApplication.ActiveDocument != null)
                     Hook.AddDocument(_inventorApplication.ActiveDocument);
                 _vaultAddin.Activate();
