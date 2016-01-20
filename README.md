@@ -1,13 +1,16 @@
 # MyVaultBrowser
-Seperate vault browser for Autodesk Inventor
+
+## The seperate vault browser for Autodesk Inventor
+This addin is for the inventor and vault users who are tired of switching back and forth between the model browser and the vault browser. It will create a seperate vault browser, with all the same functions as the original vault browser, and the browser can dock to the either side of the Inventor window, or you can also make it floating inside or outside the inventor window.
 
 ## Intro
-This addin is basically a hack, it uses win32 p/invoke to get the original vault browser, and uses it with a new dockable window. So the user interface and vault functions are exactly the same as the original vault browser, don't expect there will be more features than the original.
+This addin will not create a whole new vault browser from scratch, it actually use win32 p/invoke to find the original vault browser window, takes it and reuses it with a new dockable window. So the user interface, context menu and all the vault functions are exactly the same as the original vault browser. You don't need to learn anything new to get used to it, and you can go back to the old vault browser anytime, just by closing the new browser window.
 
 ## Feature and Usage
-* The new MyVaultBrowser window is visible by default for the first time the addin is loaded. After that Inventor should remember its visibility, floating position or docking state.
+* The new MyVaultBrowser window is visible by default for the first time the addin is loaded.
 * You can dock or undock the window as you like, just like any other dockable windows in inventor.
-* Open it from View -> Windows -> User Interface if it's closed.
+* Inventor will remember the visibility, floating position or docking state of the browser window.
+* If the window is closed, you can open it from View -> Windows -> User Interface.
 * The original vault browser is hidden when MyVaultBrowser is open.
 * The original vault browser is back when MyVaultBrowser is closed.
 * From v0.9.3, MyVaultBrowser also supports keyboard shortcut to open or close the browser, the default keyboard shortcut is "Ctrl+`", you can use other shortcuts as you like, for example, "Ctrl+1", "Alt+A", "Ctrl+Alt+Z", but be careful not use those already assigned to other commands in inventor. You can also use alias type shortcuts like "B" or "BB", however alias type shortcuts may not work sometimes. You need to manually modify the config file to change shortcuts, the setting will be saved to the following location when the addin is loaded the first time:
@@ -29,7 +32,7 @@ This addin is basically a hack, it uses win32 p/invoke to get the original vault
     ...
   ```
   Actually it is the same file where inventor store its ilogic configuration, the folder name may be different sometimes in different machines.
-* When startup, the addin will check the status of the vault addin, if vault addin is not loaded, it will ask user to load the vault addin.
+* When startup, the addin will check the status of the vault addin, if vault addin is not loaded, it will ask you to load the vault addin.
 * If you unload/reload vault addin manually from the Add-in Manager, MyVaultBrowser will stop working, you need to unload/reload MyVaultBrowser addin to make it work again.
 
 See http://autode.sk/1PRIwiJ for very simple demonstration.
