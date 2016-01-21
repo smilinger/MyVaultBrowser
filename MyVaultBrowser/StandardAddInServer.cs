@@ -183,9 +183,11 @@ namespace MyVaultBrowser
             {
                 _vaultAddin.Deactivate();
 
+                //Clear the hwnds if any, because the vault browsers are destroyed.
+                _hwndDic.Clear();
+
                 //The user may reload the addin when file is still open,
                 //then the vault browser will be recreated, we need to capture it.
-                _hwndDic.Clear();
                 if (_inventorApplication.ActiveDocument != null)
                     Hook.AddDocument(_inventorApplication.ActiveDocument);
                 _vaultAddin.Activate();
@@ -377,13 +379,23 @@ namespace MyVaultBrowser
             // Initialize AddIn members.
             _inventorApplication = addInSiteObject.Application;
 
+            try
+            {
+                _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48b682bc-42e6-4953-84c5-3d253b52e77b}"];
+            }
+            catch
+            {
+                MessageBox.Show(
+                    "The vault addin is not installed or installed correctly, MyVaultBrowser will not load.",
+                    "MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                throw;
+            }
+
             _applicationEvents = _inventorApplication.ApplicationEvents;
             _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
             _userInterfaceEvents = _inventorApplication.UserInterfaceManager.UserInterfaceEvents;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
-
-            _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48b682bc-42e6-4953-84c5-3d253b52e77b}"];
 
             _hwndDic = new Dictionary<Document, IntPtr>();
             Hook.Initialize(this);
