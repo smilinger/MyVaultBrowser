@@ -161,10 +161,7 @@ namespace MyVaultBrowser
             else
             {
                 var result =
-                    MessageBox.Show(
-                        "MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. " +
-                        "Do you want to load vault addin to use MyVaultBrowser?",
-                        "MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(Resources.Msg_TryLoadVaultAddin, @"MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
                 if (result == DialogResult.Yes)
                 {
                     SubscribeEvents();
@@ -194,8 +191,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show("Unable to reload vault addin! MyVaultBrowser will not work.", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!_vaultAddin.Activated)
             {
@@ -218,8 +214,8 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show("The shortcut key for MyVaultBrowser is not acceptable by inventor!", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
 
@@ -385,9 +381,8 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show(
-                    "The vault addin is not installed or installed correctly, MyVaultBrowser will not load.",
-                    "MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Resources.Msg_VaultAddinNotFound, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 throw;
             }
 
