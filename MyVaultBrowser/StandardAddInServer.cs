@@ -405,6 +405,7 @@ namespace MyVaultBrowser
                     "myvaultbrowser", "Vault");
             _myVaultBrowser.ShowTitleBar = true;
             _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
+            _myVaultBrowser.SetMinimumSize(200, 150);
 
             if (!_myVaultBrowser.IsCustomized)
             {
