@@ -253,7 +253,7 @@ namespace MyVaultBrowser
         private void DockableWindowsEvents_OnHide(DockableWindow DockableWindow, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore)
+            if (DockableWindow == _myVaultBrowser && BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 if (_vaultAddin.Activated)
                 {
@@ -273,7 +273,7 @@ namespace MyVaultBrowser
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
             Debug.WriteLine("DockableWindowsEvents_OnShow");
-            if (DockableWindow.InternalName == "myvaultbrowser" && BeforeOrAfter == EventTimingEnum.kBefore)
+            if (DockableWindow == _myVaultBrowser && BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 if (_vaultAddin.Activated)
                 {
