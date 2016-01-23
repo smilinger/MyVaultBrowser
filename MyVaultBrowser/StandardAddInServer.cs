@@ -67,7 +67,7 @@ namespace MyVaultBrowser
 
             private static void SetEventHook()
             {
-                var idProcess = (uint)Process.GetCurrentProcess().Id;
+                var idProcess = (uint) Process.GetCurrentProcess().Id;
 
                 // Listen for object create in inventor process.
                 _hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
@@ -89,27 +89,19 @@ namespace MyVaultBrowser
                     return;
                 }
 
-                // Find a window with class name #32770 (dialog), in which our vault browser lives.
+                // Find a window with title Vault.
                 var stringBuilder = new StringBuilder(256);
-                GetClassName(hwnd, stringBuilder, stringBuilder.Capacity);
+                GetWindowText(hwnd, stringBuilder, stringBuilder.Capacity);
 
-                if (stringBuilder.ToString() == DIALOG_CLASS_NAME)
+                if (stringBuilder.ToString() == "Vault")
                 {
-                    // Find the parent window and check the title of it,
-                    // if it is Vault, then we are done.
-                    var pHwnd = GetParent(hwnd);
-                    GetWindowText(pHwnd, stringBuilder, stringBuilder.Capacity);
-
-                    if (stringBuilder.ToString() == "Vault")
-                    {
-                        Document doc;
-                        _parent._hwndDic[doc = _documents.Dequeue()] = pHwnd;
-                        if (_documents.Count == 0)
-                            UnHookEvent();
-                        if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
-                            _parent.UpdateMyVaultBrowser(doc);
-                        Debug.WriteLine($"Vault Browser: {(int)pHwnd:X}");
-                    }
+                    Document doc;
+                    _parent._hwndDic[doc = _documents.Dequeue()] = hwnd;
+                    if (_documents.Count == 0)
+                        UnHookEvent();
+                    if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
+                        _parent.UpdateMyVaultBrowser(doc);
+                    Debug.WriteLine($"Vault Browser: {(int) hwnd:X}");
                 }
             }
         }
@@ -161,10 +153,7 @@ namespace MyVaultBrowser
             else
             {
                 var result =
-                    MessageBox.Show(
-                        "MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. " +
-                        "Do you want to load vault addin to use MyVaultBrowser?",
-                        "MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(Resources.Msg_TryLoadVaultAddin, @"MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
                 if (result == DialogResult.Yes)
                 {
                     SubscribeEvents();
@@ -194,8 +183,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show("Unable to reload vault addin! MyVaultBrowser will not work.", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!_vaultAddin.Activated)
             {
@@ -218,8 +206,8 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show("The shortcut key for MyVaultBrowser is not acceptable by inventor!", "Warning",
-                    MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.Msg_ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
 
@@ -385,9 +373,8 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show(
-                    "The vault addin is not installed or installed correctly, MyVaultBrowser will not load.",
-                    "MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Error);
+                MessageBox.Show(Resources.Msg_VaultAddinNotFound, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Error);
                 throw;
             }
 
