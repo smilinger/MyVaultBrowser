@@ -121,12 +121,12 @@
     <value>MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. Do you want to load vault addin to use MyVaultBrowser?</value>
   </data>
   <data name="Msg_ReloadVaultAddinFailed" xml:space="preserve">
-    <value>Unable to reload vault addin! MyVaultBrowser will not work.</value>
+    <value>Failed to reload vault addin, MyVaultBrowser will not work.</value>
   </data>
   <data name="Msg_ShortCutInvalid" xml:space="preserve">
     <value>The shortcut key for MyVaultBrowser is not acceptable by inventor!</value>
   </data>
   <data name="Msg_VaultAddinNotFound" xml:space="preserve">
-    <value>The vault addin is not installed or installed correctly, MyVaultBrowser will not load.</value>
+    <value>The vault addin is either not installed or not installed correctly, MyVaultBrowser will not load.</value>
   </data>
 </root>

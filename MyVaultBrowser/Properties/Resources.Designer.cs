@@ -61,7 +61,7 @@ namespace MyVaultBrowser.Properties {
         }
         
         /// <summary>
-        ///   查找类似 Unable to reload vault addin! MyVaultBrowser will not work. 的本地化字符串。
+        ///   查找类似 Failed to reload vault addin, MyVaultBrowser will not work. 的本地化字符串。
         /// </summary>
         internal static string Msg_ReloadVaultAddinFailed {
             get {
@@ -88,7 +88,7 @@ namespace MyVaultBrowser.Properties {
         }
         
         /// <summary>
-        ///   查找类似 The vault addin is not installed or installed correctly, MyVaultBrowser will not load. 的本地化字符串。
+        ///   查找类似 The vault addin is either not installed or not installed correctly, MyVaultBrowser will not load. 的本地化字符串。
         /// </summary>
         internal static string Msg_VaultAddinNotFound {
             get {
