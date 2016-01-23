@@ -67,7 +67,7 @@ namespace MyVaultBrowser
 
             private static void SetEventHook()
             {
-                var idProcess = (uint)Process.GetCurrentProcess().Id;
+                var idProcess = (uint) Process.GetCurrentProcess().Id;
 
                 // Listen for object create in inventor process.
                 _hhook = SetWinEventHook(EVENT_OBJECT_CREATE, EVENT_OBJECT_CREATE, IntPtr.Zero,
@@ -89,27 +89,19 @@ namespace MyVaultBrowser
                     return;
                 }
 
-                // Find a window with class name #32770 (dialog), in which our vault browser lives.
+                // Find a window with title Vault.
                 var stringBuilder = new StringBuilder(256);
-                GetClassName(hwnd, stringBuilder, stringBuilder.Capacity);
+                GetWindowText(hwnd, stringBuilder, stringBuilder.Capacity);
 
-                if (stringBuilder.ToString() == DIALOG_CLASS_NAME)
+                if (stringBuilder.ToString() == "Vault")
                 {
-                    // Find the parent window and check the title of it,
-                    // if it is Vault, then we are done.
-                    var pHwnd = GetParent(hwnd);
-                    GetWindowText(pHwnd, stringBuilder, stringBuilder.Capacity);
-
-                    if (stringBuilder.ToString() == "Vault")
-                    {
-                        Document doc;
-                        _parent._hwndDic[doc = _documents.Dequeue()] = pHwnd;
-                        if (_documents.Count == 0)
-                            UnHookEvent();
-                        if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
-                            _parent.UpdateMyVaultBrowser(doc);
-                        Debug.WriteLine($"Vault Browser: {(int)pHwnd:X}");
-                    }
+                    Document doc;
+                    _parent._hwndDic[doc = _documents.Dequeue()] = hwnd;
+                    if (_documents.Count == 0)
+                        UnHookEvent();
+                    if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
+                        _parent.UpdateMyVaultBrowser(doc);
+                    Debug.WriteLine($"Vault Browser: {(int) hwnd:X}");
                 }
             }
         }
