@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Msg_TryLoadVaultAddin" xml:space="preserve">
+  <data name="TryLoadVaultAddin" xml:space="preserve">
     <value>MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. Do you want to load vault addin to use MyVaultBrowser?</value>
   </data>
-  <data name="Msg_ReloadVaultAddinFailed" xml:space="preserve">
+  <data name="ReloadVaultAddinFailed" xml:space="preserve">
     <value>Failed to reload vault addin, MyVaultBrowser will not work.</value>
   </data>
-  <data name="Msg_ShortCutInvalid" xml:space="preserve">
+  <data name="ShortCutInvalid" xml:space="preserve">
     <value>The shortcut key for MyVaultBrowser is not acceptable by inventor!</value>
   </data>
-  <data name="Msg_VaultAddinNotFound" xml:space="preserve">
+  <data name="VaultAddinNotFound" xml:space="preserve">
     <value>The vault addin is either not installed or not installed correctly, MyVaultBrowser will not load.</value>
   </data>
 </root>

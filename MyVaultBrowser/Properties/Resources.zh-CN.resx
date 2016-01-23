@@ -117,16 +117,16 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="Msg_TryLoadVaultAddin" xml:space="preserve">
+  <data name="TryLoadVaultAddin" xml:space="preserve">
     <value>MyVaultBrowser 检测到 Vault 插件未加载，MyVaultBrowser 无法工作。是否加载 Vault 插件以使用 MyVaultBrowser？</value>
   </data>
-  <data name="Msg_ReloadVaultAddinFailed" xml:space="preserve">
+  <data name="ReloadVaultAddinFailed" xml:space="preserve">
     <value>无法加载 Vault 插件，MyVaultBrowser 无法工作。</value>
   </data>
-  <data name="Msg_ShortCutInvalid" xml:space="preserve">
+  <data name="ShortCutInvalid" xml:space="preserve">
     <value>为 MyVaultBrowser 指定的快捷键不被 Inventor 接受。</value>
   </data>
-  <data name="Msg_VaultAddinNotFound" xml:space="preserve">
+  <data name="VaultAddinNotFound" xml:space="preserve">
     <value>Vault 插件未安装或安装不正确，MyVaultBrowser 无法加载。</value>
   </data>
 </root>

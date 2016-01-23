@@ -153,7 +153,7 @@ namespace MyVaultBrowser
             else
             {
                 var result =
-                    MessageBox.Show(Resources.Msg_TryLoadVaultAddin, @"MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
+                    MessageBox.Show(Resources.TryLoadVaultAddin, @"MyVaultBrowser", MessageBoxButtons.YesNo, MessageBoxIcon.Asterisk);
                 if (result == DialogResult.Yes)
                 {
                     SubscribeEvents();
@@ -183,7 +183,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show(Resources.Msg_ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
             if (!_vaultAddin.Activated)
             {
@@ -206,7 +206,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show(Resources.Msg_ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
+                MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
                     MessageBoxIcon.Warning);
             }
         }
@@ -373,7 +373,7 @@ namespace MyVaultBrowser
             }
             catch
             {
-                MessageBox.Show(Resources.Msg_VaultAddinNotFound, @"MyVaultBrowser", MessageBoxButtons.OK,
+                MessageBox.Show(Resources.VaultAddinNotFound, @"MyVaultBrowser", MessageBoxButtons.OK,
                     MessageBoxIcon.Error);
                 throw;
             }

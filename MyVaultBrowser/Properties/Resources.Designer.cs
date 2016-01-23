@@ -63,36 +63,36 @@ namespace MyVaultBrowser.Properties {
         /// <summary>
         ///   查找类似 Failed to reload vault addin, MyVaultBrowser will not work. 的本地化字符串。
         /// </summary>
-        internal static string Msg_ReloadVaultAddinFailed {
+        internal static string ReloadVaultAddinFailed {
             get {
-                return ResourceManager.GetString("Msg_ReloadVaultAddinFailed", resourceCulture);
+                return ResourceManager.GetString("ReloadVaultAddinFailed", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 The shortcut key for MyVaultBrowser is not acceptable by inventor! 的本地化字符串。
         /// </summary>
-        internal static string Msg_ShortCutInvalid {
+        internal static string ShortCutInvalid {
             get {
-                return ResourceManager.GetString("Msg_ShortCutInvalid", resourceCulture);
+                return ResourceManager.GetString("ShortCutInvalid", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 MyVaultBrowser detected that the vault addin is not loaded, MyVaultBrowser will not work without vault addin. Do you want to load vault addin to use MyVaultBrowser? 的本地化字符串。
         /// </summary>
-        internal static string Msg_TryLoadVaultAddin {
+        internal static string TryLoadVaultAddin {
             get {
-                return ResourceManager.GetString("Msg_TryLoadVaultAddin", resourceCulture);
+                return ResourceManager.GetString("TryLoadVaultAddin", resourceCulture);
             }
         }
         
         /// <summary>
         ///   查找类似 The vault addin is either not installed or not installed correctly, MyVaultBrowser will not load. 的本地化字符串。
         /// </summary>
-        internal static string Msg_VaultAddinNotFound {
+        internal static string VaultAddinNotFound {
             get {
-                return ResourceManager.GetString("Msg_VaultAddinNotFound", resourceCulture);
+                return ResourceManager.GetString("VaultAddinNotFound", resourceCulture);
             }
         }
     }
