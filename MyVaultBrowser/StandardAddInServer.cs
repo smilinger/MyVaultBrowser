@@ -389,7 +389,8 @@ namespace MyVaultBrowser
 
             _myVaultBrowser =
                 _inventorApplication.UserInterfaceManager.DockableWindows.Add("{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
-                    "myvaultbrowser", "Vault");
+                    "myvaultbrowser", "MyVaultBrowser");
+            _myVaultBrowser.Title = "Vault";
             _myVaultBrowser.ShowTitleBar = true;
             _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
             _myVaultBrowser.SetMinimumSize(200, 150);
