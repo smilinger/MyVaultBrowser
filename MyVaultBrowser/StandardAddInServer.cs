@@ -1,4 +1,4 @@
-using Inventor;
+﻿using Inventor;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
@@ -200,14 +200,20 @@ namespace MyVaultBrowser
                 Settings.Default.ShortCut = shortCut;
                 Settings.Default.Save();
             }
-            try
+
+            var control = _myVaultBrowser.VisibilityControl;
+            if (control.OverrideShortcut != shortCut)
             {
-                _myVaultBrowser.VisibilityControl.OverrideShortcut = shortCut;
-            }
-            catch
-            {
-                MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
+                control.OverrideShortcut = null;
+                try
+                {
+                    control.OverrideShortcut = shortCut;
+                }
+                catch
+                {
+                    MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
+                        MessageBoxIcon.Warning);
+                }
             }
         }
 
