@@ -4,6 +4,9 @@
 This addin is for the inventor and vault users who are tired of switching back and forth between the model browser and the vault browser. It will create a seperate vault browser, with all the same functions as the original vault browser, and the browser can dock to the either side of the Inventor window, or you can also make it floating inside or outside the inventor window.
 
 ## Intro
+The idea begins from a thread on Autodesk forum:
+http://forums.autodesk.com/t5/vault-general-discussion/seperate-vault-browser/td-p/5975209
+
 This addin will not create a whole new vault browser from scratch, it actually use win32 p/invoke to find the original vault browser window, takes it and reuses it with a new dockable window. So the user interface, context menu and all the vault functions are exactly the same as the original vault browser. You don't need to learn anything new to get used to it, and you can go back to the old vault browser anytime, just by closing the new browser window.
 
 ## Feature and Usage
@@ -45,6 +48,13 @@ Unzip and copy the folder to either of these locations:
 %ALLUSERSPROFILE%\Autodesk\Inventor Addins\
 #### 2.For current user only
 %APPDATA%\Autodesk\ApplicationPlugins
+
+Or you can use the exe provided to install.
+
+## How to Uninstall
+If you installed the add-in manually with zip, just remove the add-in folder .
+
+If you installed the add-in with exe, you can uninstall it with the uninstall.exe in the add-in folder, or uninstall it from Programs and Features in Windows control panel.
 
 ## How to Build
 The code is written with VS2015, some new feature in C# 6 is used in the code, you may need to change these new feature code to build in lower VS versions.
