@@ -4,7 +4,8 @@
   <ClassId>{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}</ClassId>
   <ClientId>{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}</ClientId>
   <DisplayName>MyVaultBrowser</DisplayName>
-  <Description>MyVaultBrowser</Description>
+  <Description Language="1033">Separate Vault Browser for Autodesk Inventor</Description>
+  <Description Language="2052">独立的 Vault 浏览器</Description>
   <Assembly>MyVaultBrowser.dll</Assembly>
   <LoadBehavior>0</LoadBehavior>
   <LoadOnStartUp>1</LoadOnStartUp>

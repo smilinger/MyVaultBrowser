@@ -1,4 +1,4 @@
-using System.Resources;
+﻿using System.Resources;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -8,11 +8,11 @@ using System.Runtime.InteropServices;
 // associated with an assembly.
 //
 [assembly: AssemblyTitle("MyVaultBrowser")]
-[assembly: AssemblyDescription("MyVaultBrowser")]
+[assembly: AssemblyDescription("Separate Vault Browser for Autodesk Inventor")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("")]
 [assembly: AssemblyProduct("MyVaultBrowser")]
-[assembly: AssemblyCopyright("Copyright ?2016 smilinger")]
+[assembly: AssemblyCopyright("Copyright (c) 2016 smilinger")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
