@@ -201,19 +201,15 @@ namespace MyVaultBrowser
                 Settings.Default.Save();
             }
 
-            var control = _myVaultBrowser.VisibilityControl;
-            if (control.OverrideShortcut != shortCut)
+            _myVaultBrowser.VisibilityControl.OverrideShortcut = null;
+            try
             {
-                control.OverrideShortcut = null;
-                try
-                {
-                    control.OverrideShortcut = shortCut;
-                }
-                catch
-                {
-                    MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
-                        MessageBoxIcon.Warning);
-                }
+                _myVaultBrowser.VisibilityControl.OverrideShortcut = shortCut;
+            }
+            catch
+            {
+                MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
         }
 
@@ -242,10 +238,9 @@ namespace MyVaultBrowser
         {
             if (_activeProjectType != ProjectObject.ProjectType)
             {
-                if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode & _vaultAddin.Activated)
+                if (ProjectObject.ProjectType == MultiUserModeEnum.kVaultMode)
                 {
-                    SubscribeEvents();
-                    ReloadVaultAddin();
+                    TryLoadVaultAddin();
                 }
                 else
                 {
