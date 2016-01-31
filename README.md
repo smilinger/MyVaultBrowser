@@ -1,6 +1,6 @@
 # MyVaultBrowser
 
-## The seperate vault browser for Autodesk Inventor
+## The Seperate Vault Browser for Autodesk Inventor
 This addin is for the inventor and vault users who are tired of switching back and forth between the model browser and the vault browser. It will create a seperate vault browser, with all the same functions as the original vault browser, and the browser can dock to the either side of the Inventor window, or you can also make it floating inside or outside the inventor window.
 
 ## Intro
@@ -49,16 +49,15 @@ Unzip and copy the folder to either of these locations:
 #### 2.For current user only
 %APPDATA%\Autodesk\ApplicationPlugins
 
-Or you can use the exe provided to install.
+You can also use the exe provided to install.
 
 ## How to Uninstall
-If you installed the add-in manually with zip, just remove the add-in folder .
+If you installed the add-in manually with zip, just remove the add-in folder.
 
 If you installed the add-in with exe, you can uninstall it with the uninstall.exe in the add-in folder, or uninstall it from Programs and Features in Windows control panel.
 
 ## How to Build
-The code is written with VS2015, some new feature in C# 6 is used in the code, you may need to change these new feature code to build in lower VS versions.
-The code is not so elegant as you may expect, feel free to fork and modify it as you need.
+The code is written with VS2015, some new feature in C# 6 is used in the code, you may need to change these new feature code to build in lower VS versions. The code is not so elegant as you may expect, feel free to fork and modify it as you need.
 
 ## License
 Copyright (c) 2016 smilinger

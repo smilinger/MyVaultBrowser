@@ -143,6 +143,11 @@
 mt.exe -manifest "$(ProjectDir)MyVaultBrowser.X.manifest" -outputresource:"$(TargetPath)";#2
 XCopy "$(TargetPath)" "%25ProgramData%25\Autodesk\Inventor Addins\$(TargetName)\" /Y /R
 XCopy "$(ProjectDir)Autodesk.MyVaultBrowser.Inventor.addin" "%25ProgramData%25\Autodesk\Inventor Addins\$(TargetName)\" /Y /R
-</PostBuildEvent>
+if "$(ConfigurationName)"=="Release" (
+cd "$(SolutionDir)\Installer"
+del /f /q $(TargetName).exe $(TargetName).zip
+winrar a -ibck -afzip -ap$(TargetName) -r -ep1 $(TargetName) "$(TargetDir)*.addin" "$(TargetDir)*.dll" *.html License.txt
+"C:\Program Files (x86)\NSIS\makensis.exe" -V1 Installer.nsi
+)</PostBuildEvent>
   </PropertyGroup>
 </Project>
