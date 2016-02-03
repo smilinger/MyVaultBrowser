@@ -226,8 +226,6 @@ namespace MyVaultBrowser
         {
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
                 TryLoadVaultAddin();
-            if (_myVaultBrowser != null)
-                SetShortCut();
             if (_applicationEvents != null)
                 _applicationEvents.OnReady -= ApplicationEvents_OnReady;
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
@@ -395,6 +393,8 @@ namespace MyVaultBrowser
             _myVaultBrowser.ShowTitleBar = true;
             _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
             _myVaultBrowser.SetMinimumSize(200, 150);
+
+            SetShortCut();
 
             if (!_myVaultBrowser.IsCustomized)
             {
