@@ -1,7 +1,7 @@
 # MyVaultBrowser
 
-## The Seperate Vault Browser for Autodesk Inventor
-This addin is for the inventor and vault users who are tired of switching back and forth between the model browser and the vault browser. It will create a seperate vault browser, with all the same functions as the original vault browser, and the browser can dock to the either side of the Inventor window, or you can also make it floating inside or outside the inventor window.
+## The Separate Vault Browser for Autodesk Inventor
+This addin is for the inventor and vault users who are tired of switching back and forth between the model browser and the vault browser. It will create a separate vault browser, with all the same functions as the original vault browser, and the browser can dock to the either side of the Inventor window, or you can also make it floating inside or outside the inventor window.
 
 ## Intro
 The idea begins from a thread on Autodesk forum:
