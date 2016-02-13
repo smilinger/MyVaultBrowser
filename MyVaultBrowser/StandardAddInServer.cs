@@ -366,6 +366,9 @@ namespace MyVaultBrowser
             // Initialize AddIn members.
             _inventorApplication = addInSiteObject.Application;
 
+            if (!_inventorApplication.Visible)
+                return;
+
             try
             {
                 _vaultAddin = _inventorApplication.ApplicationAddIns.ItemById["{48b682bc-42e6-4953-84c5-3d253b52e77b}"];
