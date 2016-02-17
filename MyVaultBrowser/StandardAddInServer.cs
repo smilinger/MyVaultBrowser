@@ -95,8 +95,8 @@ namespace MyVaultBrowser
 
                 if (stringBuilder.ToString() == "Vault")
                 {
-                    Document doc;
-                    _parent._hwndDic[doc = _documents.Dequeue()] = hwnd;
+                    var doc = _documents.Dequeue();
+                    _parent._hwndDic[doc] = hwnd;
                     if (_documents.Count == 0)
                         UnHookEvent();
                     if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
