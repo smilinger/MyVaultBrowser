@@ -224,7 +224,7 @@ namespace MyVaultBrowser
         private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context,
             out HandlingCodeEnum HandlingCode)
         {
-            if (_activeProjectType == MultiUserModeEnum.kVaultMode)
+            if (_inventorApplication.Visible && _activeProjectType == MultiUserModeEnum.kVaultMode)
                 TryLoadVaultAddin();
             if (_applicationEvents != null)
                 _applicationEvents.OnReady -= ApplicationEvents_OnReady;
