@@ -180,14 +180,42 @@ namespace MyVaultBrowser
                 if (_inventorApplication.ActiveDocument != null)
                     Hook.AddDocument(_inventorApplication.ActiveDocument);
                 _vaultAddin.Activate();
+
+                AddPlaceFromVaultButton();
             }
             catch
             {
-                MessageBox.Show(Resources.ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                MessageBox.Show(Resources.ReloadVaultAddinFailed, @"MyVaultBrowser", MessageBoxButtons.OK,
+                    MessageBoxIcon.Warning);
             }
             if (!_vaultAddin.Activated)
             {
                 UnSubscribeEvents();
+            }
+        }
+
+        /// <summary>
+        /// Re-add the "Place From Vault" button to Assemble-Place ribbon panel after reload vault add-in.
+        /// </summary>
+        private void AddPlaceFromVaultButton()
+        {
+            var ribbon = _inventorApplication.UserInterfaceManager.Ribbons["Assembly"];
+            var ribbonPanel = ribbon.RibbonTabs["id_TabAssemble"].RibbonPanels["id_PanelA_AssembleComponent"];
+            var commandControl =
+                ribbon.RibbonTabs["id_TabVault"].RibbonPanels["id_PanelZ_VaultAccess"].CommandControls[
+                    "VaultPlaceFromVault"];
+            
+            //var button = (ButtonDefinition) commandControl.ControlDefinition;
+            //var button = (ButtonDefinition) _inventorApplication.CommandManager.ControlDefinitions["VaultPlaceFromVault"];
+            try
+            {
+                ribbonPanel.CommandControls["AssemblyPlaceSplit"].ChildControls.AddCopy(commandControl,
+                    "AssemblyPlaceComponentCmd");
+                //ribbonPanel.CommandControls["AssemblyPlaceSplit"].ChildControls.AddButton(button, true, true, "AssemblyPlaceComponentCmd");
+            }
+            catch
+            {
+                //already added, ignored
             }
         }
 
