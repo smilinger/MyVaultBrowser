@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8" standalone="yes"?>
 <assembly xmlns="urn:schemas-microsoft-com:asm.v1" manifestVersion="1.0">
-  <assemblyIdentity name="MyVaultBrowser" version="0.9.8.0" processorArchitecture="msil"></assemblyIdentity>
+  <assemblyIdentity name="MyVaultBrowser" version="0.9.9.0" processorArchitecture="msil"></assemblyIdentity>
   <clrClass clsid="{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}" progid="MyVaultBrowser.StandardAddInServer" threadingModel="Both" name="MyVaultBrowser.StandardAddInServer" runtimeVersion="v4.0.30319"></clrClass>
   <file name="myvaultbrowser.dll" hashalg="SHA1"></file>
 </assembly>
