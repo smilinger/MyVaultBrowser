@@ -28,6 +28,8 @@ http://forums.autodesk.com/t5/vault-general-discussion/seperate-vault-browser/td
     * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_dyn3yltervsx4dgsvto5pwd10whykmwn\Autodesk®_Inventor®_2015\user.config
   * Inventor 2016
     * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_wts00mmfdaa1a2jhamx4xvzf21fh4mec\Autodesk_Inventor_2016\user.config
+  * Inventor 2017
+    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_zbfyabommuc4bk1g5d0cylt25bymrva1\Autodesk_Inventor_2017\user.config
 
   ```xml
     ...
