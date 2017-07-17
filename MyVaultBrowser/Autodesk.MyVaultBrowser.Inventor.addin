@@ -12,6 +12,7 @@
   <UserUnloadable>1</UserUnloadable>
   <Hidden>0</Hidden>
   <SupportedSoftwareVersionGreaterThan>16..</SupportedSoftwareVersionGreaterThan>
+  <SupportedSoftwareVersionLessThan>22..</SupportedSoftwareVersionLessThan>
   <DataVersion>1</DataVersion>
   <UserInterfaceVersion>1</UserInterfaceVersion>
 </Addin>
