@@ -26,6 +26,7 @@ namespace MyVaultBrowser
         private UserInterfaceEvents _userInterfaceEvents;
 
         private DockableWindow _myVaultBrowser;
+        private ButtonDefinition _myVaultBrowserButton;
 
         //Keep the reference of the vault addin so we can query its status anytime.
         private ApplicationAddIn _vaultAddin;
@@ -219,35 +220,7 @@ namespace MyVaultBrowser
             }
         }
 
-        private void SetShortCut()
-        {
-            var shortCut = Settings.Default.ShortCut;
-            if (shortCut == "")
-            {
-                shortCut = "Ctrl+`";
-                Settings.Default.ShortCut = shortCut;
-                Settings.Default.Save();
-            }
-
-            _myVaultBrowser.VisibilityControl.OverrideShortcut = null;
-            try
-            {
-                _myVaultBrowser.VisibilityControl.OverrideShortcut = shortCut;
-            }
-            catch
-            {
-                MessageBox.Show(Resources.ShortCutInvalid, @"MyVaultBrowser", MessageBoxButtons.OK,
-                    MessageBoxIcon.Warning);
-            }
-        }
-
         #region Event Handlers
-
-        private void UserInterfaceEvents_OnResetShortcuts(NameValueMap Context)
-        {
-            if (_myVaultBrowser != null)
-                SetShortCut();
-        }
 
         private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context,
             out HandlingCodeEnum HandlingCode)
@@ -422,7 +395,10 @@ namespace MyVaultBrowser
             _myVaultBrowser.DisabledDockingStates = DockingStateEnum.kDockBottom | DockingStateEnum.kDockTop;
             _myVaultBrowser.SetMinimumSize(200, 150);
 
-            SetShortCut();
+            _myVaultBrowserButton = _inventorApplication.CommandManager.ControlDefinitions.AddButtonDefinition(
+                "MyVaultBrowser", "myvaultbrowserbutton", CommandTypesEnum.kQueryOnlyCmdType, "{ffbbb57a-07f3-4d5c-97b0-e8e302247c7a}",
+                "Toggle MyVaultBrowser", "", "", "", ButtonDisplayEnum.kNoTextWithIcon);
+            _myVaultBrowserButton.OnExecute += _myVaultBrowserButton_OnExecute;
 
             if (!_myVaultBrowser.IsCustomized)
             {
@@ -431,7 +407,6 @@ namespace MyVaultBrowser
             }
 
             _applicationEvents.OnActiveProjectChanged += ApplicationEvents_OnActiveProjectChanged;
-            _userInterfaceEvents.OnResetShortcuts += UserInterfaceEvents_OnResetShortcuts;
 
             if (_inventorApplication.Ready)
             {
@@ -443,13 +418,20 @@ namespace MyVaultBrowser
 
         }
 
+        private void _myVaultBrowserButton_OnExecute(NameValueMap Context)
+        {
+            if (_myVaultBrowser != null)
+            {
+                _myVaultBrowser.Visible = !(_myVaultBrowser.Visible);
+            }
+        }
+
         public void Deactivate()
         {
             // Release objects.
             if (_activeProjectType == MultiUserModeEnum.kVaultMode)
                 UnSubscribeEvents();
             _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
-            _userInterfaceEvents.OnResetShortcuts -= UserInterfaceEvents_OnResetShortcuts;
 
             _userInterfaceEvents = null;
             _dockableWindowsEvents = null;
@@ -457,6 +439,7 @@ namespace MyVaultBrowser
 
             _vaultAddin = null;
 
+            _myVaultBrowserButton = null;
             _myVaultBrowser = null;
 
             _hwndDic = null;
