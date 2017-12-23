@@ -21,29 +21,7 @@ This addin will not create a whole new vault browser from scratch, it actually u
 * The original vault browser is back when MyVaultBrowser is closed.
 * When startup, the addin will check the status of the vault addin, if vault addin is not loaded, it will ask you to load the vault addin.
 * If you unload/reload vault addin manually from the Add-in Manager, MyVaultBrowser will stop working, you need to unload/reload MyVaultBrowser addin to make it work again.
-* From v0.9.3, MyVaultBrowser also supports keyboard shortcut to open or close the browser, the default keyboard shortcut is "Ctrl+`", you can use other shortcuts as you like, for example, "Ctrl+1", "Alt+A", "Ctrl+Alt+Z", but be careful not use those already assigned to other commands in inventor. You can also use alias type shortcuts like "B" or "BB", however alias type shortcuts may not work sometimes. You need to manually modify the config file to change shortcuts, the setting will be saved to the following location when the addin is loaded the first time:
-  * For Inventor 2013
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_auy0uw3qwqde4zs0rm1cz1fkj5cf54lq\Autodesk®_Inventor®_2013\user.config
-  * For Inventor 2014
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_ow5451lkj52xbizxdtghrf2pdfathyhr\Autodesk®_Inventor®_2014\user.config
-  * For Inventor 2015
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_dyn3yltervsx4dgsvto5pwd10whykmwn\Autodesk®_Inventor®_2015\user.config
-  * For Inventor 2016
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_wts00mmfdaa1a2jhamx4xvzf21fh4mec\Autodesk_Inventor_2016\user.config
-  * For Inventor 2017
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_zbfyabommuc4bk1g5d0cylt25bymrva1\Autodesk_Inventor_2017\user.config
-
-  ```xml
-    ...
-      <userSettings>
-          <MyVaultBrowser.Properties.Settings>
-              <setting name="ShortCut" serializeAs="String">
-                  <value>B</value>
-              </setting>
-          </MyVaultBrowser.Properties.Settings>
-    ...
-  ```
-  Actually it is the same file where inventor store its ilogic configuration, the folder name may be different sometimes in different machines.
+* The default keyboard shortcut setting is removed because it cause problems in some situation, instead now you can add shortcut for MyVaultBrowser in inventor customize settings like normal inventor commands.
 
 See <http://autode.sk/1PRIwiJ> for very simple demonstration.
 
