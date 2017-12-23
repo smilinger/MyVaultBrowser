@@ -11,11 +11,11 @@ SetCompressor /SOLID lzma
 SetFont "Tahoma"  8
 
 VIAddVersionKey "ProductName" "MyVaultBrowser"
-VIAddVersionKey "LegalCopyright" "Copyright 2016 ${U+00A9} smilinger"
+VIAddVersionKey "LegalCopyright" "Copyright 2017 ${U+00A9} smilinger"
 VIAddVersionKey "FileDescription" "Separate Vault Browser for Autodesk Inventor"
-VIAddVersionKey "FileVersion" "0.9.9.0"
-VIAddVersionKey "ProductVersion" "0.9.9.0"
-VIProductVersion "0.9.9.0"
+VIAddVersionKey "FileVersion" "1.0.0.0"
+VIAddVersionKey "ProductVersion" "1.0.0.0"
+VIProductVersion "1.0.0.0"
 
 ;--------------------------------
 ;Include Modern UI
@@ -123,7 +123,7 @@ Section $(NAME_ADDIN) Addin
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyVaultBrowser" \
                "DisplayName" "MyVaultBrowser"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyVaultBrowser" \
-               "DisplayVersion" "0.9.9"
+               "DisplayVersion" "1.0.0"
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyVaultBrowser" \
                "DisplayIcon" "$\"$INSTDIR\MyVaultBrowser.ico$\""
     WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\MyVaultBrowser" \
