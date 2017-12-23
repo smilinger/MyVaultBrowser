@@ -23,7 +23,6 @@ namespace MyVaultBrowser
         private MultiUserModeEnum _activeProjectType;
         private ApplicationEvents _applicationEvents;
         private DockableWindowsEvents _dockableWindowsEvents;
-        private UserInterfaceEvents _userInterfaceEvents;
 
         private DockableWindow _myVaultBrowser;
         private ButtonDefinition _myVaultBrowserButton;
@@ -61,7 +60,7 @@ namespace MyVaultBrowser
             public static void AddDocument(Document doc)
             {
                 _documents.Enqueue(doc);
-                Debug.WriteLine($"Number of Documents: {_documents.Count}");
+
                 if (_hhook == IntPtr.Zero)
                     SetEventHook();
             }
@@ -102,7 +101,6 @@ namespace MyVaultBrowser
                         UnHookEvent();
                     if (doc == _parent._inventorApplication.ActiveDocument && _parent._myVaultBrowser.Visible)
                         _parent.UpdateMyVaultBrowser(doc);
-                    Debug.WriteLine($"Vault Browser: {(int) hwnd:X}");
                 }
             }
         }
@@ -206,13 +204,10 @@ namespace MyVaultBrowser
                 ribbon.RibbonTabs["id_TabVault"].RibbonPanels["id_PanelZ_VaultAccess"].CommandControls[
                     "VaultPlaceFromVault"];
             
-            //var button = (ButtonDefinition) commandControl.ControlDefinition;
-            //var button = (ButtonDefinition) _inventorApplication.CommandManager.ControlDefinitions["VaultPlaceFromVault"];
             try
             {
                 ribbonPanel.CommandControls["AssemblyPlaceSplit"].ChildControls.AddCopy(commandControl,
                     "AssemblyPlaceComponentCmd");
-                //ribbonPanel.CommandControls["AssemblyPlaceSplit"].ChildControls.AddButton(button, true, true, "AssemblyPlaceComponentCmd");
             }
             catch
             {
@@ -272,7 +267,6 @@ namespace MyVaultBrowser
         private void DockableWindowsEvents_OnShow(DockableWindow DockableWindow, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            Debug.WriteLine("DockableWindowsEvents_OnShow");
             if (DockableWindow == _myVaultBrowser && BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 if (_vaultAddin.Activated)
@@ -292,8 +286,6 @@ namespace MyVaultBrowser
         private void ApplicationEvents_OnCloseView(Inventor.View ViewObject, EventTimingEnum BeforeOrAfter, NameValueMap Context,
             out HandlingCodeEnum HandlingCode)
         {
-            Debug.WriteLine(
-                $"OnCloseView: {BeforeOrAfter}, Document: {ViewObject.Document.DisplayName}, Number of Views: {ViewObject.Document.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 var doc = ViewObject.Document;
@@ -311,8 +303,6 @@ namespace MyVaultBrowser
         private void ApplicationEvents_OnDeactivateDocument(_Document DocumentObject, EventTimingEnum BeforeOrAfter,
             NameValueMap Context, out HandlingCodeEnum HandlingCode)
         {
-            Debug.WriteLine(
-                $"OnDeactivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
             if (BeforeOrAfter == EventTimingEnum.kBefore)
             {
                 if (_myVaultBrowser.Visible && _hwndDic.ContainsKey(DocumentObject))
@@ -349,8 +339,6 @@ namespace MyVaultBrowser
                 if (!_vaultAddin.Activated)
                     UnSubscribeEvents();
             }
-            Debug.WriteLine(
-                $"OnActivateDocument: {BeforeOrAfter}, Document: {DocumentObject.DisplayName}, Number of Views: {DocumentObject.Views.Count}");
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
         }
 
@@ -380,7 +368,6 @@ namespace MyVaultBrowser
 
             _applicationEvents = _inventorApplication.ApplicationEvents;
             _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
-            _userInterfaceEvents = _inventorApplication.UserInterfaceManager.UserInterfaceEvents;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
 
@@ -433,7 +420,6 @@ namespace MyVaultBrowser
                 UnSubscribeEvents();
             _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
 
-            _userInterfaceEvents = null;
             _dockableWindowsEvents = null;
             _applicationEvents = null;
 
