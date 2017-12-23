@@ -23,6 +23,7 @@ namespace MyVaultBrowser
         private MultiUserModeEnum _activeProjectType;
         private ApplicationEvents _applicationEvents;
         private DockableWindowsEvents _dockableWindowsEvents;
+        private UserInputEvents _userInputEvents;
 
         private DockableWindow _myVaultBrowser;
         private ButtonDefinition _myVaultBrowserButton;
@@ -150,6 +151,7 @@ namespace MyVaultBrowser
             _applicationEvents.OnCloseView -= ApplicationEvents_OnCloseView;
             _dockableWindowsEvents.OnShow -= DockableWindowsEvents_OnShow;
             _dockableWindowsEvents.OnHide -= DockableWindowsEvents_OnHide;
+            _userInputEvents.OnLinearMarkingMenu -= UserInputEvents_OnLinearMarkingMenu;
         }
 
         private void TryLoadVaultAddin()
@@ -194,6 +196,11 @@ namespace MyVaultBrowser
                 _vaultAddin.Activate();
 
                 AddPlaceFromVaultButton();
+
+                if (_myVaultBrowser.Visible)
+                {
+                    _userInputEvents.OnLinearMarkingMenu += UserInputEvents_OnLinearMarkingMenu;
+                }
             }
             catch
             {
@@ -249,6 +256,8 @@ namespace MyVaultBrowser
                     {
                         RestoreVaultBrowser(doc);
                     }
+
+                    _userInputEvents.OnLinearMarkingMenu -= UserInputEvents_OnLinearMarkingMenu;
                 }
                 else
                 {
@@ -270,6 +279,8 @@ namespace MyVaultBrowser
                     {
                         UpdateMyVaultBrowser(doc);
                     }
+
+                    _userInputEvents.OnLinearMarkingMenu += UserInputEvents_OnLinearMarkingMenu;
                 }
                 else
                 {
@@ -277,6 +288,16 @@ namespace MyVaultBrowser
                 }
             }
             HandlingCode = HandlingCodeEnum.kEventNotHandled;
+        }
+
+        private void UserInputEvents_OnLinearMarkingMenu(ObjectsEnumerator SelectedEntities, SelectionDeviceEnum SelectionDevice,
+            CommandControls LinearMenu, NameValueMap AdditionalInfo)
+        {
+            var control = _inventorApplication.CommandManager.ControlDefinitions["VaultFindInBrowser"];
+            if (SelectedEntities.Count == 1 && SelectedEntities[1] is ComponentOccurrence)
+            {
+                LinearMenu.AddButton((ButtonDefinition) control);
+            }
         }
 
         private void ApplicationEvents_OnReady(EventTimingEnum BeforeOrAfter, NameValueMap Context,
@@ -408,6 +429,7 @@ namespace MyVaultBrowser
 
             _applicationEvents = _inventorApplication.ApplicationEvents;
             _dockableWindowsEvents = _inventorApplication.UserInterfaceManager.DockableWindows.Events;
+            _userInputEvents = _inventorApplication.CommandManager.UserInputEvents;
 
             _activeProjectType = _inventorApplication.DesignProjectManager.ActiveDesignProject.ProjectType;
 
@@ -458,6 +480,7 @@ namespace MyVaultBrowser
 
             _applicationEvents.OnActiveProjectChanged -= ApplicationEvents_OnActiveProjectChanged;
 
+            _userInputEvents = null;
             _dockableWindowsEvents = null;
             _applicationEvents = null;
 
