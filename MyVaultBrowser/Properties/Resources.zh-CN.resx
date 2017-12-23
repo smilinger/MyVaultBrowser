@@ -123,9 +123,6 @@
   <data name="ReloadVaultAddinFailed" xml:space="preserve">
     <value>无法加载 Vault 插件，MyVaultBrowser 无法工作。</value>
   </data>
-  <data name="ShortCutInvalid" xml:space="preserve">
-    <value>为 MyVaultBrowser 指定的快捷键不被 Inventor 接受。</value>
-  </data>
   <data name="VaultAddinNotFound" xml:space="preserve">
     <value>Vault 插件未安装或安装不正确，MyVaultBrowser 无法加载。</value>
   </data>

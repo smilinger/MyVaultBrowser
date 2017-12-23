@@ -123,9 +123,6 @@
   <data name="ReloadVaultAddinFailed" xml:space="preserve">
     <value>Failed to reload vault addin, MyVaultBrowser will not work.</value>
   </data>
-  <data name="ShortCutInvalid" xml:space="preserve">
-    <value>The shortcut key for MyVaultBrowser is not acceptable by inventor!</value>
-  </data>
   <data name="VaultAddinNotFound" xml:space="preserve">
     <value>The vault addin is either not installed or not installed correctly, MyVaultBrowser will not load.</value>
   </data>
