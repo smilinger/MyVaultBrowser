@@ -21,29 +21,7 @@
 * MyVaultBrowser窗口关闭时，原Vault浏览器将恢复显示。
 * 启动时，插件会对Vault插件的状态进行检测，如果Vault插件未加载，会提示你进行加载。
 * 如果你手动从附加模块管理器里卸载/加载了Vault插件，MyVaultBrowser将停止工作。你必须重新卸载/加载MyVaultBrowser插件才能使其恢复工作。
-* 从v0.9.3版本开始，该插件支持使用快捷键开关窗口，默认的快捷键是"Ctrl+`"。你可以使用你喜欢的快捷键，例如，"Ctrl+1"、"Alt+A"、"Ctrl+Alt+Z"，但是注意不要使用已经被Inventor使用的快捷键。你也可以使用命令别名形式的快捷键例如"B"或者"BB"，不过这种快捷键有时不起作用。更改快捷键需要手动修改配置文件，配置文件会在插件第一次加载时自动保存到以下位置：
-  * Inventor 2013
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_auy0uw3qwqde4zs0rm1cz1fkj5cf54lq\Autodesk®_Inventor®_2013\user.config
-  * Inventor 2014
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_ow5451lkj52xbizxdtghrf2pdfathyhr\Autodesk®_Inventor®_2014\user.config
-  * Inventor 2015
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_dyn3yltervsx4dgsvto5pwd10whykmwn\Autodesk®_Inventor®_2015\user.config
-  * Inventor 2016
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_wts00mmfdaa1a2jhamx4xvzf21fh4mec\Autodesk_Inventor_2016\user.config
-  * Inventor 2017
-    * %LOCALAPPDATA%\Autodesk,_Inc\DefaultDomain_Path_zbfyabommuc4bk1g5d0cylt25bymrva1\Autodesk_Inventor_2017\user.config
-
-  ```xml
-    ...
-      <userSettings>
-          <MyVaultBrowser.Properties.Settings>
-              <setting name="ShortCut" serializeAs="String">
-                  <value>B</value>
-              </setting>
-          </MyVaultBrowser.Properties.Settings>
-    ...
-  ```
-  该文件实际上也是Inventor的iLogic插件的配置文件，注意实际文件夹位置在某些机器上可能会有不同。
+* 默认的快捷键设置已移除，因为在某些情况下可能引起问题，现在可以直接在Inventor自定义设置中为MyVaultBrowser设置快捷键。
 
 简单的演示：<http://autode.sk/1PRIwiJ>。
 
